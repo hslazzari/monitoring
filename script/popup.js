@@ -17,10 +17,25 @@ document.addEventListener('DOMContentLoaded', function () {
 	  		$(this).html("Stop Monitoring");
 			$(this).removeClass("green");
 			$(this).addClass("red");
+			chrome.tabs.executeScript(null,	{
+				code: "console.log('Start Monitoring');"			
+			});
 		} else {
 			$(this).html("Start Monitoring");
 			$(this).removeClass("red");
 			$(this).addClass("green");
+			chrome.tabs.executeScript(null,	{
+				code: "console.log('Stop Monitoring');"			
+			});
 		}
+
+		
 	});
+
+	$("#problem").click(function() {
+	  	chrome.tabs.executeScript(null,	{
+			file: "script/problem.js"
+		});
+	});
+	//window.close();
 });
