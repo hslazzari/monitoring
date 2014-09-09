@@ -1,0 +1,14 @@
+{
+  "name": "A monitoring plugin of QoE",
+  "description": "HTML5 video QoE monitoring plugin",
+  "version": "1.0",
+  "permissions": [
+    "tabs", "http://*/*", "https://*/*"
+  ],
+  "browser_action": {
+      "default_title": "Monitoring status",
+      "default_icon": "icon.png",
+      "default_popup": "popup.html"
+  },
+  "manifest_version": 2
+}
