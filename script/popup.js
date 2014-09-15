@@ -39,3 +39,10 @@ document.addEventListener('DOMContentLoaded', function () {
 	});
 	//window.close();
 });
+
+
+$("video")addEventListener("loadedmetadata", function()
+  {
+  		console.log("LOADED METADATA");
+  }
+);
