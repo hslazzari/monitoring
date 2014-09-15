@@ -68,7 +68,7 @@ function totalTimeBuffered(videoElement) {
 }
 
 function countStall(videoElement) {
-	
+
 }
 
 function numberOfStall(videoElement) {
@@ -76,5 +76,9 @@ function numberOfStall(videoElement) {
 }
 
 function lenghtOfEachStall(videoElement) {
+
+}
+
+function startQualityPlaybackMonitor(videoElement, chunkInterval) {
 	
 }
