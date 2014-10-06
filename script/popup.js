@@ -32,17 +32,11 @@ document.addEventListener('DOMContentLoaded', function () {
 		
 	});
 
-	$("#problem").click(function() {
-	  	chrome.tabs.executeScript(null,	{
-			file: "script/problem.js"
-		});
-	});
+
+	//$("#problem").click(function() {
+	//  	chrome.tabs.executeScript(null,	{
+	//		file: "script/html5monitor.js"
+	//	});
+	//});
 	//window.close();
 });
-
-
-$("video")addEventListener("loadedmetadata", function()
-  {
-  		console.log("LOADED METADATA");
-  }
-);

@@ -1,1 +1,1 @@
-console.log("Reportando um problema em: " + Date());
+//console.log("Reportando um problema em: " + Date());
