@@ -35,10 +35,10 @@ function startTime(videoElement, callback) {
 	var startTime;
 	var totalTime = -1;
 	videoElement.addEventListener("loadstart", function() {
-		startTime = Date.getTime()
+		startTime = new Date().getTime(); 
 	});
 	videoElement.addEventListener("play", function() {
-		totalTime = Date.getTime() - startTime;
+		totalTime = new Date().getTime(); 
 	});
 }	
 
@@ -113,17 +113,13 @@ function drawGraph() {
 function startQualityPlaybackMonitor(videoElement, chunkInterval) {
 	timerI = setInterval(function() {
 
-		console.log(videoElement);
 		if(videoElement.ended) {
 			clearInterval(timerI);
-			console.log("PAROU");
 			drawGraph();
 
 		}
 		else {
-			console.log("OI");
 			if(videoElement.currentTime != null) {
-				console.log("OI2");
 				qualityAtTime[videoElement.currentTime.toString()] = getCurrentPlaybackQuality(videoElement);
 			}
 		}
@@ -132,9 +128,81 @@ function startQualityPlaybackMonitor(videoElement, chunkInterval) {
 
 }
 
+function startBufferSizeInfoMonitor(videoElement, chunkInterval) {
+	timerI = setInterval(function() {
 
-if($("video") != null) {
-	console.log("MONITORANDO");
-	startQualityPlaybackMonitor(document.getElementsByTagName('video')[0], 1000);
+		if(videoElement.ended) {
+			clearInterval(timerI);
+			console.log("Video Stopped");
+		}
+		else {
+			if(videoElement.currentTime != null) {
+				for(var i = 0; i <  videoElement.buffered.length; i++) {
+					if(videoElement.currentTime >=  videoElement.buffered.start(i) && videoElement.currentTime <=  videoElement.buffered.end(i)) {
+						console.log("Video inside interval: (" + videoElement.buffered.start(i) + ", " + videoElement.buffered.end(i) + ") playing at: " + videoElement.currentTime + " with " + (videoElement.buffered.end(i) - videoElement.currentTime) + " seconds to play");
+					}
+				
+
+				}
+
+				
+			}
+		}
+	
+	}, chunkInterval);
 }
 
+
+if($("video") != null) {
+	startQualityPlaybackMonitor(document.getElementsByTagName('video')[0], 1000);
+
+}
+
+
+
+function displayEvents(videoElement) {
+	videoElement.addEventListener("abort", function() {
+	    console.log("Video load aborted");
+	});
+
+	videoElement.addEventListener("canplay", function() {
+	    console.log("Video can play");
+	});
+
+	videoElement.addEventListener("canplaythrough", function() {
+	    console.log("Video can play through");
+	});
+	
+	videoElement.addEventListener("loadstart", function() {
+	    console.log("Video load start");
+	});
+	
+	videoElement.addEventListener("pause", function() {
+	    console.log("Video pause");
+	});
+	
+	videoElement.addEventListener("play", function() {
+	    console.log("Video play");
+	});
+	
+	videoElement.addEventListener("playing", function() {
+	    console.log("Video playing");
+	});
+	
+	videoElement.addEventListener("seeked", function() {
+	    console.log("Video seeked");
+	});
+	
+	videoElement.addEventListener("seeking", function() {
+	    console.log("Video seeking");
+	});
+	
+	videoElement.addEventListener("stalled", function() {
+	    console.log("Video stalled");
+	});
+	
+	videoElement.addEventListener("waiting", function() {
+	    console.log("Video waiting");
+	});
+
+}
