@@ -19,6 +19,7 @@
 var qualityAtTime = {};
 var timerI;
 var timerForBuffering;
+var timerForVideoFramesMonitor;
 var lengthofStall = {};
 
 var stall = 0;
@@ -32,7 +33,20 @@ var startBuffering = 0;
 var endBuffering = 0;
 
 
-var timeUntilBeganPlaying = -1;
+var decodedFrames = 0;
+var decodedPerSec = 0;
+var audioBytesDecoded = 0;
+var audioBytesDecodedPerSec = 0;
+var videoBytesDecoded = 0;
+var videoBytesDecodedPerSec = 0;
+var droppedFrames = 0;
+var droppedFramesPerSec = 0;
+
+var decodedMean = new Mean();
+var audioMean = new Mean();
+var videoMean = new Mean();
+var dropMean = new Mean();
+
 
 var player = $("video")
 
@@ -133,6 +147,10 @@ function startQualityPlaybackMonitor(videoElement, chunkInterval) {
 
 }
 
+function stopQualityPlaybackMonitor() {
+	clearInterval(timerI);
+}
+
 function startBufferSizeInfoMonitor(videoElement, chunkInterval) {
 	timerI = setInterval(function() {
 
@@ -208,12 +226,72 @@ function stopBufferingMonitor() {
 
 
 
+function Mean() {
+  this.count = 0;
+  this.sum = 0;
+  
+  this.record = function(val) {
+    this.count++;
+    this.sum += val;
+  };
+  
+  this.mean = function() {
+    return this.count ? (this.sum / this.count).toFixed(3) : 0;
+  };
+}
+
+function recalcRates(videoElement) {
+  
+  if (videoElement.readyState <= HTMLMediaElement.HAVE_CURRENT_DATA || videoElement.paused) {
+    return;
+  }
+
+  decodedPerSec = (videoElement.webkitDecodedFrameCount - decodedFrames);
+  decodedFrames = videoElement.webkitDecodedFrameCount;
+
+  audioBytesDecodedPerSec = videoElement.webkitAudioDecodedByteCount - audioBytesDecoded;
+  audioBytesDecoded = videoElement.webkitAudioDecodedByteCount;
+
+  videoBytesDecodedPerSec = videoElement.webkitVideoDecodedByteCount - videoBytesDecoded;
+  videoBytesDecoded = videoElement.webkitVideoDecodedByteCount;
+
+  droppedFramesPerSec = videoElement.webkitDroppedFrameCount - droppedFrames;
+  droppedFrames = videoElement.webkitDroppedFrameCount;
+
+  decodedMean.record(decodedPerSec);
+  audioMean.record(audioBytesDecodedPerSec);
+  videoMean.record(videoBytesDecodedPerSec);
+  dropMean.record(droppedFramesPerSec);
+  
+  
+  console.log("Audio bytes decoded: " + videoElement.webkitAudioDecodedByteCount + " average p/s: " + audioMean.mean());
+  console.log("Video bytes decoded: " + videoElement.webkitVideoDecodedByteCount + " average p/s: " + videoMean.mean());
+  console.log("Decoded frames: " + videoElement.webkitDecodedFrameCount + " average p/s: " + decodedMean.mean());
+  console.log("Dropped frames: " + videoElement.webkitDroppedFrameCount + " average p/s: " + dropMean.mean());
+  console.log("");
+}
+
+
+function startVideoFramesMonitor(videoElement) {
+	timerForVideoFramesMonitor = setInterval(function(){
+	 recalcRates(videoElement);
+	}, 1000);
+}
+
+function stopVideoFramesMonitor() {
+	clearInterval(timerForVideoFramesMonitor);
+}
+
+
 if(document.getElementsByTagName('video')[0] != null) {
 	var vd = document.getElementsByTagName('video')[0];
 	startQualityPlaybackMonitor(document.getElementsByTagName('video')[0], 1000);
 	startBufferingMonitor(document.getElementsByTagName('video')[0]);
+	startVideoFramesMonitor(vd);
 	document.getElementsByTagName('video')[0].addEventListener("ended", function() {
 		stopBufferingMonitor();
+		stopVideoFramesMonitor();
+		stopQualityPlaybackMonitor();
 		if(stall > 0)
 			console.log("Time until video started: " + lengthofStall[0] + " seconds");
 		for(var i = 1; i < stall; i++) {
