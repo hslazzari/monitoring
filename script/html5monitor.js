@@ -18,6 +18,24 @@
 
 var qualityAtTime = {};
 var timerI;
+var timerForBuffering;
+var lengthofStall = {};
+
+var stall = 0;
+
+
+var checkInterval  = 50.0
+var lastPlayPos    = 0
+var currentPlayPos = 0
+var bufferingDetected = false
+var startBuffering = 0;
+var endBuffering = 0;
+
+
+var timeUntilBeganPlaying = -1;
+
+var player = $("video")
+
 
 function getCurrentPlaybackQuality(videoElement) {
 	return {'width' : videoElement.videoWidth, 'height' : videoElement.videoHeight};
@@ -31,16 +49,6 @@ function totalPlayedTime(videoElement) {
 	return total;
 }
 
-function startTime(videoElement, callback) {
-	var startTime;
-	var totalTime = -1;
-	videoElement.addEventListener("loadstart", function() {
-		startTime = new Date().getTime(); 
-	});
-	videoElement.addEventListener("play", function() {
-		totalTime = new Date().getTime(); 
-	});
-}	
 
 function timeUntilCurrentBufferEnd(videoElement) {
 	var ct = videoElement.currentTime;
@@ -69,16 +77,13 @@ function totalTimeBuffered(videoElement) {
 }
 
 function countStall(videoElement) {
-
+	stall++;
 }
 
 function numberOfStall(videoElement) {
-
+	console.log(stall);
 }
 
-function lenghtOfEachStall(videoElement) {
-
-}
 
 function drawGraph() {
 	$("body").append("<canvas id='myChart' width='400' height='400'></canvas>");
@@ -153,56 +158,76 @@ function startBufferSizeInfoMonitor(videoElement, chunkInterval) {
 }
 
 
-if($("video") != null) {
+function numberOfStalls() {
+	console.log(stall-1);
+}
+
+
+function startBufferingMonitor(videoElement) {
+	timerForBuffering = setInterval(function() {
+		currentPlayPos = videoElement.currentTime
+
+	    // checking offset, e.g. 1 / 50ms = 0.02
+	    var offset = 1 / checkInterval
+
+	    // if no buffering is currently detected,
+	    // and the position does not seem to increase
+	    // and the player isn't manually paused...
+	    if (
+	            !bufferingDetected 
+	            && currentPlayPos < (lastPlayPos + offset)
+	            && !videoElement.paused
+	        ) {
+	    	startBuffering = new Date().getTime();
+	        console.log("buffering")
+	        bufferingDetected = true
+	    }
+
+	    // if we were buffering but the player has advanced,
+	    // then there is no buffering
+	    if (
+	        bufferingDetected 
+	        && currentPlayPos > (lastPlayPos + offset)
+	        && !videoElement.paused	
+	        ) {
+	    	var tm = ((new Date().getTime() - startBuffering)/1000);
+	    	lengthofStall[stall] = tm;
+	    	countStall();
+	        console.log("Buffering for: " + tm + " seconds");
+	        console.log("not buffering anymore")
+	        bufferingDetected = false
+	    }
+	    lastPlayPos = currentPlayPos
+	}, checkInterval)
+}
+
+function stopBufferingMonitor() {
+	clearInterval(timerForBuffering);
+
+}
+
+
+
+if(document.getElementsByTagName('video')[0] != null) {
+	var vd = document.getElementsByTagName('video')[0];
 	startQualityPlaybackMonitor(document.getElementsByTagName('video')[0], 1000);
+	startBufferingMonitor(document.getElementsByTagName('video')[0]);
+	document.getElementsByTagName('video')[0].addEventListener("ended", function() {
+		stopBufferingMonitor();
+		if(stall > 0)
+			console.log("Time until video started: " + lengthofStall[0] + " seconds");
+		for(var i = 1; i < stall; i++) {
+			console.log("Length of stall " + i + " was " + lengthofStall[i]);
+		};
+
+		console.log("Total Played Time: " + totalPlayedTime(vd));
+		numberOfStall();
+
+
+
+	});
 
 }
 
 
 
-function displayEvents(videoElement) {
-	videoElement.addEventListener("abort", function() {
-	    console.log("Video load aborted");
-	});
-
-	videoElement.addEventListener("canplay", function() {
-	    console.log("Video can play");
-	});
-
-	videoElement.addEventListener("canplaythrough", function() {
-	    console.log("Video can play through");
-	});
-	
-	videoElement.addEventListener("loadstart", function() {
-	    console.log("Video load start");
-	});
-	
-	videoElement.addEventListener("pause", function() {
-	    console.log("Video pause");
-	});
-	
-	videoElement.addEventListener("play", function() {
-	    console.log("Video play");
-	});
-	
-	videoElement.addEventListener("playing", function() {
-	    console.log("Video playing");
-	});
-	
-	videoElement.addEventListener("seeked", function() {
-	    console.log("Video seeked");
-	});
-	
-	videoElement.addEventListener("seeking", function() {
-	    console.log("Video seeking");
-	});
-	
-	videoElement.addEventListener("stalled", function() {
-	    console.log("Video stalled");
-	});
-	
-	videoElement.addEventListener("waiting", function() {
-	    console.log("Video waiting");
-	});
-
-}
