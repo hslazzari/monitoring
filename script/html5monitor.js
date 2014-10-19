@@ -47,6 +47,8 @@ var audioMean = new Mean();
 var videoMean = new Mean();
 var dropMean = new Mean();
 
+var id_ = -1;
+
 
 var player = $("video")
 
@@ -283,11 +285,18 @@ function stopVideoFramesMonitor() {
 }
 
 
+
 if(document.getElementsByTagName('video')[0] != null) {
+	//$.get( "http://0.0.0.0:3000/id", function( data ) {
+  	//	id_ = data.id;
+	//});
+
 	var vd = document.getElementsByTagName('video')[0];
 	startQualityPlaybackMonitor(document.getElementsByTagName('video')[0], 1000);
 	startBufferingMonitor(document.getElementsByTagName('video')[0]);
 	startVideoFramesMonitor(vd);
+
+
 	document.getElementsByTagName('video')[0].addEventListener("ended", function() {
 		stopBufferingMonitor();
 		stopVideoFramesMonitor();
@@ -297,6 +306,8 @@ if(document.getElementsByTagName('video')[0] != null) {
 		for(var i = 1; i < stall; i++) {
 			console.log("Length of stall " + i + " was " + lengthofStall[i]);
 		};
+
+		//$.post("http://0.0.0.0:3000/stall", { 'id': id_, 'numberOfStalls': stall , 'stall': JSON.stringfy(lengthofStall)});
 
 		console.log("Total Played Time: " + totalPlayedTime(vd));
 		numberOfStall();
