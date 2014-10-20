@@ -47,6 +47,9 @@ var audioMean = new Mean();
 var videoMean = new Mean();
 var dropMean = new Mean();
 
+var lastWidth = -1;
+var lastHeight = -1;
+
 var id_ = -1;
 
 
@@ -97,9 +100,12 @@ function countStall(videoElement) {
 }
 
 function numberOfStall(videoElement) {
-	console.log(stall);
+	return stall;
 }
 
+function totalTime(videoElement) {
+	return videoElement.duration;
+}
 
 function drawGraph() {
 	$("body").append("<canvas id='myChart' width='400' height='400'></canvas>");
@@ -141,7 +147,12 @@ function startQualityPlaybackMonitor(videoElement, chunkInterval) {
 		}
 		else {
 			if(videoElement.currentTime != null) {
-				qualityAtTime[videoElement.currentTime.toString()] = getCurrentPlaybackQuality(videoElement);
+				var current_quality = getCurrentPlaybackQuality(videoElement);
+				if(current_quality.width != lastWidth || current_quality.height != lastHeight) {
+					qualityAtTime[videoElement.currentTime.toString()] = current_quality;
+					lastWidth = current_quality.width;
+					lastHeight = current_quality.height;
+				}
 			}
 		}
 	
@@ -177,10 +188,6 @@ function startBufferSizeInfoMonitor(videoElement, chunkInterval) {
 	}, chunkInterval);
 }
 
-
-function numberOfStalls() {
-	console.log(stall-1);
-}
 
 
 function startBufferingMonitor(videoElement) {
@@ -301,19 +308,32 @@ if(document.getElementsByTagName('video')[0] != null) {
 		stopBufferingMonitor();
 		stopVideoFramesMonitor();
 		stopQualityPlaybackMonitor();
-		if(stall > 0)
+		if(stall > 0) {
+			console.log("Number of Stalls: " + (numberOfStall() - 1));
 			console.log("Time until video started: " + lengthofStall[0] + " seconds");
-		for(var i = 1; i < stall; i++) {
-			console.log("Length of stall " + i + " was " + lengthofStall[i]);
-		};
+			for(var i = 1; i < stall; i++) {
+				console.log("Length of stall " + i + " was " + lengthofStall[i]);
+			};
+		}
+
+
+
+		var size = Object.keys(qualityAtTime).length;
+		var keys = Object.keys(qualityAtTime);
+
+		console.log("Total video time: " + totalTime(vd));
+		console.log("Total Played Time: " + totalPlayedTime(vd));
+		
+		console.log("Playing Quality");
+		for(var i = 0; i < size; i++) {
+			console.log("Quality at " + keys[i] + " has width = " + qualityAtTime[keys[i]].width + " and height = " + qualityAtTime[keys[i]].height);
+		}
+
+		
+
+		
 
 		//$.post("http://0.0.0.0:3000/stall", { 'id': id_, 'numberOfStalls': stall , 'stall': JSON.stringfy(lengthofStall)});
-
-		console.log("Total Played Time: " + totalPlayedTime(vd));
-		numberOfStall();
-
-
-
 	});
 
 }
