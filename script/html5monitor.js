@@ -20,6 +20,7 @@ var qualityAtTime = {};
 var timerI;
 var timerForBuffering;
 var timerForVideoFramesMonitor;
+var timerI2;
 var lengthofStall = {};
 
 var stall = 0;
@@ -49,6 +50,7 @@ var dropMean = new Mean();
 
 var lastWidth = -1;
 var lastHeight = -1;
+var bufferingAtStart = false;
 
 var id_ = -1;
 
@@ -149,7 +151,10 @@ function startQualityPlaybackMonitor(videoElement, chunkInterval) {
 			if(videoElement.currentTime != null) {
 				var current_quality = getCurrentPlaybackQuality(videoElement);
 				if(current_quality.width != lastWidth || current_quality.height != lastHeight) {
-					qualityAtTime[videoElement.currentTime.toString()] = current_quality;
+					if(lastWidth == -1 && lastHeight == -1)
+						qualityAtTime["0"] = current_quality;
+					else
+						qualityAtTime[videoElement.currentTime.toString()] = current_quality;
 					lastWidth = current_quality.width;
 					lastHeight = current_quality.height;
 				}
@@ -164,8 +169,12 @@ function stopQualityPlaybackMonitor() {
 	clearInterval(timerI);
 }
 
+function stopBufferSizeInfoMonitor() {
+	clearInterval(timerI2);
+}
+
 function startBufferSizeInfoMonitor(videoElement, chunkInterval) {
-	timerI = setInterval(function() {
+	timerI2 = setInterval(function() {
 
 		if(videoElement.ended) {
 			clearInterval(timerI);
@@ -208,6 +217,8 @@ function startBufferingMonitor(videoElement) {
 	    	startBuffering = new Date().getTime();
 	        console.log("buffering")
 	        bufferingDetected = true
+	        if(videoElement.currentTime < 1)
+	        	bufferingAtStart = true;
 	    }
 
 	    // if we were buffering but the player has advanced,
@@ -249,22 +260,22 @@ function Mean() {
   };
 }
 
-function recalcRates(videoElement) {
+function recalcRates(videoElement, interval) {
   
   if (videoElement.readyState <= HTMLMediaElement.HAVE_CURRENT_DATA || videoElement.paused) {
     return;
   }
 
-  decodedPerSec = (videoElement.webkitDecodedFrameCount - decodedFrames);
+  decodedPerSec = (videoElement.webkitDecodedFrameCount - decodedFrames)/(interval/1000);
   decodedFrames = videoElement.webkitDecodedFrameCount;
 
-  audioBytesDecodedPerSec = videoElement.webkitAudioDecodedByteCount - audioBytesDecoded;
+  audioBytesDecodedPerSec = (videoElement.webkitAudioDecodedByteCount - audioBytesDecoded)/(interval/1000);
   audioBytesDecoded = videoElement.webkitAudioDecodedByteCount;
 
-  videoBytesDecodedPerSec = videoElement.webkitVideoDecodedByteCount - videoBytesDecoded;
+  videoBytesDecodedPerSec = (videoElement.webkitVideoDecodedByteCount - videoBytesDecoded)/(interval/1000);
   videoBytesDecoded = videoElement.webkitVideoDecodedByteCount;
 
-  droppedFramesPerSec = videoElement.webkitDroppedFrameCount - droppedFrames;
+  droppedFramesPerSec = (videoElement.webkitDroppedFrameCount - droppedFrames)/(interval/1000);
   droppedFrames = videoElement.webkitDroppedFrameCount;
 
   decodedMean.record(decodedPerSec);
@@ -282,9 +293,10 @@ function recalcRates(videoElement) {
 
 
 function startVideoFramesMonitor(videoElement) {
+	var interval = 10000;
 	timerForVideoFramesMonitor = setInterval(function(){
-	 recalcRates(videoElement);
-	}, 1000);
+	 recalcRates(videoElement, interval);
+	}, interval);
 }
 
 function stopVideoFramesMonitor() {
@@ -294,26 +306,40 @@ function stopVideoFramesMonitor() {
 
 
 if(document.getElementsByTagName('video')[0] != null) {
+
+
 	//$.get( "http://0.0.0.0:3000/id", function( data ) {
   	//	id_ = data.id;
 	//});
 
 	var vd = document.getElementsByTagName('video')[0];
-	startQualityPlaybackMonitor(document.getElementsByTagName('video')[0], 1000);
-	startBufferingMonitor(document.getElementsByTagName('video')[0]);
+	startQualityPlaybackMonitor(vd, 1000);
+	startBufferingMonitor(vd);
+	startBufferSizeInfoMonitor(vd, 1000)
 	startVideoFramesMonitor(vd);
 
 
 	document.getElementsByTagName('video')[0].addEventListener("ended", function() {
+		
+		 
 		stopBufferingMonitor();
+		stopBufferSizeInfoMonitor();
 		stopVideoFramesMonitor();
 		stopQualityPlaybackMonitor();
 		if(stall > 0) {
-			console.log("Number of Stalls: " + (numberOfStall() - 1));
-			console.log("Time until video started: " + lengthofStall[0] + " seconds");
-			for(var i = 1; i < stall; i++) {
-				console.log("Length of stall " + i + " was " + lengthofStall[i]);
-			};
+			if(bufferingAtStart) {
+				console.log("Number of Stalls: " + (numberOfStall() - 1));
+				console.log("Time until video started: " + lengthofStall[0] + " seconds");
+				for(var i = 1; i < stall; i++) {
+					console.log("Length of stall " + i + " was " + lengthofStall[i]);
+				};
+			}
+			else {
+				console.log("Number of Stalls: " + numberOfStall());
+				for(var i = 0; i < stall; i++) {
+					console.log("Length of stall " + i + " was " + lengthofStall[i]);
+				};
+			}
 		}
 
 
@@ -330,12 +356,34 @@ if(document.getElementsByTagName('video')[0] != null) {
 		}
 
 		
+	BootstrapDialog.show({
+            message: 'Como foi sua experiência durante a exibição do vídeo?',
+            buttons: [{
+                label: 'Boa',
+                cssClass: 'btn-primary',
+                action: function(){
+                    alert('Hi Orange!');
+                }
+            }, {
+                label: 'Ruim',
+                cssClass: 'btn-danger'
+            }/*, {
+                label: 'Close',
+                action: function(dialogItself){
+                    dialogItself.close();
+                }
+            }*/]
+        });
+		
 
 		
 
 		//$.post("http://0.0.0.0:3000/stall", { 'id': id_, 'numberOfStalls': stall , 'stall': JSON.stringfy(lengthofStall)});
 	});
 
+	function teste() {
+
+	}
 }
 
 
