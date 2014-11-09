@@ -16,6 +16,15 @@
 
 */
 
+
+var saveFile = "";
+var stallFile = "";
+var frameRateFile = "FrameRatePerSecond" + '\n' + "VideoFrameRate,AudioFrameRate" + '\n';
+var bufferFile = "BufferTime" + '\n' + "BufferID,BufferStart,BufferEnd,TotalBufferTime,TotalRemaingTime" + '\n';
+var playedTimeFile = "Played Time" + '\n'+ "Played Start,Played Stop" + '\n';
+
+
+
 var qualityAtTime = {};
 var timerI;
 var timerForBuffering;
@@ -52,10 +61,13 @@ var lastWidth = -1;
 var lastHeight = -1;
 var bufferingAtStart = false;
 
+
 var id_ = -1;
 
 
 var player = $("video")
+
+
 
 
 function getCurrentPlaybackQuality(videoElement) {
@@ -184,7 +196,11 @@ function startBufferSizeInfoMonitor(videoElement, chunkInterval) {
 			if(videoElement.currentTime != null) {
 				for(var i = 0; i <  videoElement.buffered.length; i++) {
 					if(videoElement.currentTime >=  videoElement.buffered.start(i) && videoElement.currentTime <=  videoElement.buffered.end(i)) {
+						bufferFile = bufferFile + i + ',' + videoElement.buffered.start(i) + ',' + videoElement.buffered.end(i) + ',' + (videoElement.buffered.end(i) - videoElement.buffered.start(i)) + ',' + (videoElement.buffered.end(i) - videoElement.currentTime) + '\n';
 						console.log("Video inside interval: (" + videoElement.buffered.start(i) + ", " + videoElement.buffered.end(i) + ") playing at: " + videoElement.currentTime + " with " + (videoElement.buffered.end(i) - videoElement.currentTime) + " seconds to play");
+					}
+					else {
+						bufferFile = bufferFile + i + ',' + videoElement.buffered.start(i) + ',' + videoElement.buffered.end(i) + ',' + (videoElement.buffered.end(i) - videoElement.buffered.start(i)) + ',' + "0" + '\n';
 					}
 				
 
@@ -288,7 +304,7 @@ function recalcRates(videoElement, interval) {
   console.log("Video bytes decoded: " + videoElement.webkitVideoDecodedByteCount + " average p/s: " + videoMean.mean());
   console.log("Decoded frames: " + videoElement.webkitDecodedFrameCount + " average p/s: " + decodedMean.mean());
   console.log("Dropped frames: " + videoElement.webkitDroppedFrameCount + " average p/s: " + dropMean.mean());
-  console.log("");
+  frameRateFile = frameRateFile + videoMean.mean() + ',' + audioMean.mean() + '\n';
 }
 
 
@@ -313,10 +329,17 @@ if(document.getElementsByTagName('video')[0] != null) {
 	//});
 
 	var vd = document.getElementsByTagName('video')[0];
+
+
+
+
 	startQualityPlaybackMonitor(vd, 1000);
 	startBufferingMonitor(vd);
 	startBufferSizeInfoMonitor(vd, 1000)
 	startVideoFramesMonitor(vd);
+
+	$("body").append("<a href='' id='dataLink' download='data.csv'></a>");
+	var $link = $("#dataLink");
 
 
 	document.getElementsByTagName('video')[0].addEventListener("ended", function() {
@@ -328,15 +351,24 @@ if(document.getElementsByTagName('video')[0] != null) {
 		stopQualityPlaybackMonitor();
 		if(stall > 0) {
 			if(bufferingAtStart) {
+				stallFile = stallFile + "Number of Stalls," + (numberOfStall() - 1) + '\n';
 				console.log("Number of Stalls: " + (numberOfStall() - 1));
+				stallFile = stallFile + "Start Time," + lengthofStall[0] + '\n';
+				
 				console.log("Time until video started: " + lengthofStall[0] + " seconds");
+				stallFile = stallFile + "Stall Number,Stall Time" + '\n';
 				for(var i = 1; i < stall; i++) {
+					stallFile = stallFile + (i-1) + "," + lengthofStall[i] + '\n';
 					console.log("Length of stall " + i + " was " + lengthofStall[i]);
 				};
 			}
 			else {
+				stallFile = stallFile + "Number of Stalls," + numberOfStall() + '\n';
+				stallFile = stallFile + "Start Time," + "0" + '\n';
 				console.log("Number of Stalls: " + numberOfStall());
+				stallFile = stallFile + "Stall Number,Stall Time" + '\n';
 				for(var i = 0; i < stall; i++) {
+					stallFile = stallFile + i + "," + lengthofStall[i] + '\n';
 					console.log("Length of stall " + i + " was " + lengthofStall[i]);
 				};
 			}
@@ -348,25 +380,50 @@ if(document.getElementsByTagName('video')[0] != null) {
 		var keys = Object.keys(qualityAtTime);
 
 		console.log("Total video time: " + totalTime(vd));
+		saveFile = saveFile + "Total Video Time," + totalTime(vd) + '\n';
 		console.log("Total Played Time: " + totalPlayedTime(vd));
+		saveFile = saveFile + "Total Played Time,"+totalPlayedTime(vd) + '\n';
+
 		
 		console.log("Playing Quality");
+		saveFile = saveFile + "Quality" + '\n';
+		saveFile = "Quality Time,Quality width,Quality Height" + '\n';
 		for(var i = 0; i < size; i++) {
+			saveFile = saveFile + keys[i] + ',' + qualityAtTime[keys[i]].width + ',' + qualityAtTime[keys[i]].height + '\n';
 			console.log("Quality at " + keys[i] + " has width = " + qualityAtTime[keys[i]].width + " and height = " + qualityAtTime[keys[i]].height);
 		}
 
+		for(i = 0; i < document.getElementsByTagName('video')[0].played.length; i++) {
+			playedTimeFile = playedTimeFile + document.getElementsByTagName('video')[0].played.start(i) + ',' + document.getElementsByTagName('video')[0].played.end(i) + '\n';
+		}
+
+		saveFile = saveFile + stallFile;
+		saveFile = saveFile + playedTimeFile;
+		saveFile = saveFile + bufferFile;
+		saveFile = saveFile + frameRateFile;
 		
+
+    	
 	BootstrapDialog.show({
             message: 'Como foi sua experiência durante a exibição do vídeo?',
             buttons: [{
-                label: 'Boa',
+            	label: 'Boa',
                 cssClass: 'btn-primary',
                 action: function(){
-                    alert('Hi Orange!');
+                    //alert('Hi Orange!');
+                    saveFile = saveFile + "Opinion,Good" + '\n';
+                    $link.attr("href", 'data:Application/octet-stream,' + encodeURIComponent(saveFile))[0].click();
+	
                 }
             }, {
                 label: 'Ruim',
-                cssClass: 'btn-danger'
+                cssClass: 'btn-danger',
+                action: function(){
+                    //alert('Hi Orange!');
+                    saveFile = saveFile + "Opinion,Ruim" + '\n';
+                    $link.attr("href", 'data:Application/octet-stream,' + encodeURIComponent(saveFile))[0].click();
+	
+                }
             }/*, {
                 label: 'Close',
                 action: function(dialogItself){
