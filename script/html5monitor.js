@@ -23,7 +23,7 @@ var frameRateFile = "FrameRatePerSecond" + '\n' + "VideoFrameRate,AudioFrameRate
 var bufferFile = "BufferTime" + '\n' + "BufferID,BufferStart,BufferEnd,TotalBufferTime,TotalRemaingTime" + '\n';
 var playedTimeFile = "Played Time" + '\n'+ "Played Start,Played Stop" + '\n';
 
-
+var saida_CSV = "";
 
 var qualityAtTime = {};
 var timerI;
@@ -31,6 +31,7 @@ var timerForBuffering;
 var timerForVideoFramesMonitor;
 var timerI2;
 var lengthofStall = {};
+var totalBufferingTime = 0;
 
 var stall = 0;
 
@@ -51,6 +52,7 @@ var videoBytesDecoded = 0;
 var videoBytesDecodedPerSec = 0;
 var droppedFrames = 0;
 var droppedFramesPerSec = 0;
+var started = false;
 
 var decodedMean = new Mean();
 var audioMean = new Mean();
@@ -189,7 +191,7 @@ function startBufferSizeInfoMonitor(videoElement, chunkInterval) {
 	timerI2 = setInterval(function() {
 
 		if(videoElement.ended) {
-			clearInterval(timerI);
+			clearInterval(timerI2);
 			console.log("Video Stopped");
 		}
 		else {
@@ -225,10 +227,14 @@ function startBufferingMonitor(videoElement) {
 	    // if no buffering is currently detected,
 	    // and the position does not seem to increase
 	    // and the player isn't manually paused...
+	    //console.log("OI: " + !bufferingDetected);
+	    //console.log("OI2: " + (currentPlayPos < (lastPlayPos + offset)));
+	    //console.log("OI3: " + !videoElement.paused);
+
 	    if (
 	            !bufferingDetected 
 	            && currentPlayPos < (lastPlayPos + offset)
-	            && !videoElement.paused
+	            && (!videoElement.paused || !started)
 	        ) {
 	    	startBuffering = new Date().getTime();
 	        console.log("buffering")
@@ -248,6 +254,7 @@ function startBufferingMonitor(videoElement) {
 	    	lengthofStall[stall] = tm;
 	    	countStall();
 	        console.log("Buffering for: " + tm + " seconds");
+	        totalBufferingTime = totalBufferingTime + tm;
 	        console.log("not buffering anymore")
 	        bufferingDetected = false
 	    }
@@ -331,7 +338,10 @@ if(document.getElementsByTagName('video')[0] != null) {
 	var vd = document.getElementsByTagName('video')[0];
 
 
-
+	vd.addEventListener("play", function() {
+		started = true;
+	});
+	
 
 	startQualityPlaybackMonitor(vd, 1000);
 	startBufferingMonitor(vd);
@@ -349,11 +359,14 @@ if(document.getElementsByTagName('video')[0] != null) {
 		stopBufferSizeInfoMonitor();
 		stopVideoFramesMonitor();
 		stopQualityPlaybackMonitor();
+
+
 		if(stall > 0) {
 			if(bufferingAtStart) {
 				stallFile = stallFile + "Number of Stalls," + (numberOfStall() - 1) + '\n';
 				console.log("Number of Stalls: " + (numberOfStall() - 1));
 				stallFile = stallFile + "Start Time," + lengthofStall[0] + '\n';
+				saida_CSV = saida_CSV + lengthofStall[0] + "," + (numberOfStall() - 1) + ",";
 				
 				console.log("Time until video started: " + lengthofStall[0] + " seconds");
 				stallFile = stallFile + "Stall Number,Stall Time" + '\n';
@@ -363,6 +376,7 @@ if(document.getElementsByTagName('video')[0] != null) {
 				};
 			}
 			else {
+				saida_CSV = saida_CSV + "0" + "," + numberOfStall() + ","
 				stallFile = stallFile + "Number of Stalls," + numberOfStall() + '\n';
 				stallFile = stallFile + "Start Time," + "0" + '\n';
 				console.log("Number of Stalls: " + numberOfStall());
@@ -374,6 +388,7 @@ if(document.getElementsByTagName('video')[0] != null) {
 			}
 		}
 
+		saida_CSV = saida_CSV + (totalPlayedTime(vd) + totalBufferingTime);
 
 
 		var size = Object.keys(qualityAtTime).length;
@@ -401,8 +416,10 @@ if(document.getElementsByTagName('video')[0] != null) {
 		saveFile = saveFile + playedTimeFile;
 		saveFile = saveFile + bufferFile;
 		saveFile = saveFile + frameRateFile;
-		
 
+		$link.attr("href", 'data:Application/octet-stream,' + encodeURIComponent(saida_CSV))[0].click();
+		
+/*
     	
 	BootstrapDialog.show({
             message: 'Como foi sua experiência durante a exibição do vídeo?',
@@ -424,14 +441,14 @@ if(document.getElementsByTagName('video')[0] != null) {
                     $link.attr("href", 'data:Application/octet-stream,' + encodeURIComponent(saveFile))[0].click();
 	
                 }
-            }/*, {
+            }, {
                 label: 'Close',
                 action: function(dialogItself){
                     dialogItself.close();
                 }
-            }*/]
+            }]
         });
-		
+		*/
 
 		
 
