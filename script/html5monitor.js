@@ -348,7 +348,16 @@ if(document.getElementsByTagName('video')[0] != null) {
 	startBufferSizeInfoMonitor(vd, 1000)
 	startVideoFramesMonitor(vd);
 
-	$("body").append("<a href='' id='dataLink' download='data.csv'></a>");
+    var outName = "";
+
+    var d = new Date();
+    var n = d.getTime();
+    var result = d.getFullYear().toString() + (d.getMonth() + 1) + d.getDate().toString() + d.getHours().toString() + d.getMinutes().toString() + "-" + n + ".csv";
+
+
+    outName = outName + result;
+
+	$("body").append("<a href='' id='dataLink' download='" + outName + "'></a>");
 	var $link = $("#dataLink");
 
 
