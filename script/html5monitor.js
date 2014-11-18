@@ -69,6 +69,8 @@ var id_ = -1;
 
 var player = $("video")
 
+var savedFile = false;
+
 
 
 
@@ -326,44 +328,7 @@ function stopVideoFramesMonitor() {
 	clearInterval(timerForVideoFramesMonitor);
 }
 
-
-
-if(document.getElementsByTagName('video')[0] != null) {
-
-
-	//$.get( "http://0.0.0.0:3000/id", function( data ) {
-  	//	id_ = data.id;
-	//});
-
-	var vd = document.getElementsByTagName('video')[0];
-
-
-	vd.addEventListener("play", function() {
-		started = true;
-	});
-	
-
-	startQualityPlaybackMonitor(vd, 1000);
-	startBufferingMonitor(vd);
-	startBufferSizeInfoMonitor(vd, 1000)
-	startVideoFramesMonitor(vd);
-
-    var outName = "";
-
-    var d = new Date();
-    var n = d.getTime();
-    var result = d.getFullYear().toString() + (d.getMonth() + 1) + d.getDate().toString() + d.getHours().toString() + d.getMinutes().toString() + "-" + n + ".csv";
-
-
-    outName = outName + result;
-
-	$("body").append("<a href='' id='dataLink' download='" + outName + "'></a>");
-	var $link = $("#dataLink");
-
-
-	document.getElementsByTagName('video')[0].addEventListener("ended", function() {
-		
-		 
+function endAllProcess(forced) {
 		stopBufferingMonitor();
 		stopBufferSizeInfoMonitor();
 		stopVideoFramesMonitor();
@@ -399,6 +364,10 @@ if(document.getElementsByTagName('video')[0] != null) {
 
 		saida_CSV = saida_CSV + (totalPlayedTime(vd) + totalBufferingTime);
 
+		if(forced) {
+			saida_CSV = saida_CSV + ",F";
+		}
+
 
 		var size = Object.keys(qualityAtTime).length;
 		var keys = Object.keys(qualityAtTime);
@@ -427,6 +396,59 @@ if(document.getElementsByTagName('video')[0] != null) {
 		saveFile = saveFile + frameRateFile;
 
 		$link.attr("href", 'data:Application/octet-stream,' + encodeURIComponent(saida_CSV))[0].click();
+
+		savedFile = true;
+}
+
+
+
+if(document.getElementsByTagName('video')[0] != null) {
+
+
+	$(window).on('beforeunload', function() {
+    	if(!savedFile) {
+    		endAllProcess(true);
+    	}
+    	
+	});
+
+
+
+	//$.get( "http://0.0.0.0:3000/id", function( data ) {
+  	//	id_ = data.id;
+	//});
+
+	var vd = document.getElementsByTagName('video')[0];
+
+
+	vd.addEventListener("play", function() {
+		started = true;
+	});
+	
+
+	startQualityPlaybackMonitor(vd, 1000);
+	startBufferingMonitor(vd);
+	startBufferSizeInfoMonitor(vd, 1000)
+	startVideoFramesMonitor(vd);
+
+    var outName = "";
+
+    var d = new Date();
+    var n = d.getTime();
+    var result = d.getFullYear().toString() + (d.getMonth() + 1) + d.getDate().toString() + d.getHours().toString() + d.getMinutes().toString() + "-" + n + ".csv";
+
+
+    outName = outName + result;
+
+	$("body").append("<a href='' id='dataLink' download='" + outName + "'></a>");
+	var $link = $("#dataLink");
+
+
+
+	document.getElementsByTagName('video')[0].addEventListener("ended", function() {
+		
+		 
+		endAllProcess(false);
 		
 /*
     	
