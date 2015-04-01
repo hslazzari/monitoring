@@ -1,0 +1,11 @@
+init
+
+
+sudo mongod
+node app2.js 
+
+mongo
+db.dropDatabase()
+
+
+

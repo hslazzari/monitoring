@@ -26,8 +26,17 @@
                   "js/bootstrap-dialog.js",
                   "js/bootstrap-dialog.min.js",
                   "script/Chart.js",
+                  "script/monitor.js",
                   "script/html5monitor.js"
               ]
       }
-  ]
+  ],
+
+  "background": {
+        "scripts": [
+                      "script/jquery-2.1.1.min.js",
+                      "script/background.js"
+                   ],
+        "persistent": false
+  }
 }
