@@ -18,6 +18,10 @@
 
 function Monitor(video_element, url) {
 	console.log("Created Monitor");
+	
+	this.start_timestamp = Date.now();
+	this.netmetric = null;
+
 	this.video_element_ = video_element;
 	console.log(this.video_element_);
 	this.url_ = url;
@@ -26,6 +30,9 @@ function Monitor(video_element, url) {
 	this.stall_ = 0;
 	this.stall_length_ = [];
 	this.total_stall_length_ = 0;
+	this.current_video_position_ = 0;
+	this.timestamp_of_stall_ = Date.now();
+								
 
 	//Control Variable to stall counter
 
@@ -151,7 +158,12 @@ Monitor.prototype.total_stall_length = function() {
 Monitor.prototype.increment_number_of_stall = function(stall_length) {
 	this.total_stall_length_ = this.total_stall_length_ + stall_length;
 
-	this.stall_length_.push(stall_length);
+	this.stall_length_.push({
+								current_video_position : this.current_video_position_,
+								timestamp_of_stall : this.timestamp_of_stall_,
+								duration_of_stall : stall_length
+
+							});
 	this.stall_ = this.stall_ + 1;
 }
 
@@ -200,6 +212,9 @@ Monitor.prototype.start_stall_monitor = function(check_interval_in_miliseconds) 
 	    
 	    	self.start_buffering_time_ = new Date().getTime();
 	       	self.stall_detected_ = true
+	       	self.current_video_position_ = self.video_element_.currentTime;
+	       	self.timestamp_of_stall_ = Date.now();
+
 	        if(current_play_position <= offset)
 	        	self.loading_time_ = true;
 	    }
@@ -243,11 +258,21 @@ Monitor.prototype.start_playback_quality_monitor = function(check_interval_in_mi
 			if(self.video_element_.currentTime != null) {
 				var current_quality = self.get_current_playback_resolution();
 
+
+
 				if(current_quality.width != self.last_width || current_quality.height != self.last_height) {
+					var quality_p = {
+						timestamp_of_quality : Date.now(),
+		              	current_video_position : self.video_element_.currentTime,
+		              	video_width : current_quality.width,
+		              	video_height: current_quality.height,
+					};
+
 					if(self.last_width == -1 && self.last_height == -1)
-						self.playback_quality_at_time_.push({'first':0, 'second':current_quality});
-					else
-						self.playback_quality_at_time_.push({'first':self.video_element_.currentTime, 'second':current_quality});
+						quality_p.current_video_position = 0;
+
+
+					self.playback_quality_at_time_.push(quality_p);
 
 					self.last_width = current_quality.width;
 					self.last_height = current_quality.height;
@@ -263,7 +288,12 @@ Monitor.prototype.playback_quality = function() {
 }
 
 Monitor.prototype.store_frame_per_second = function(interval, decoded_frames_per_second) {
-	this.frames_per_second_.push({'first':interval, 'second':decoded_frames_per_second});
+	var frame_p = {
+		timestamp_of_frame : Date.now(),
+        current_video_position : interval,
+        number_of_frames: decoded_frames_per_second
+    };
+	this.frames_per_second_.push(frame_p);
 }
 
 Monitor.prototype.frame_per_second = function() {
@@ -273,7 +303,13 @@ Monitor.prototype.frame_per_second = function() {
 
 
 Monitor.prototype.store_video_bytes_decoded_per_second = function(interval, video_bytes_decoded_per_second) {
-	this.video_bytes_decoded_per_second_.push({'first':interval, 'second':video_bytes_decoded_per_second});
+	var video_p = {
+		current_video_position : interval,
+    	timestamp_of_video_bytes_decoded : Date.now(),
+    	video_bytes : video_bytes_decoded_per_second
+    };
+
+	this.video_bytes_decoded_per_second_.push(video_p);
 }
 
 Monitor.prototype.video_bytes_decoded_per_second = function() {
@@ -283,7 +319,13 @@ Monitor.prototype.video_bytes_decoded_per_second = function() {
 
 
 Monitor.prototype.store_audio_bytes_decoded_per_second = function(interval, audio_bytes_decoded_per_second) {
-	this.audio_bytes_decoded_per_second_.push({'first':interval,'second':audio_bytes_decoded_per_second});
+	var audio_p = {
+		current_video_position : interval,
+        timestamp_of_audio_bytes_decoded : Date.now(),
+        audio_bytes : audio_bytes_decoded_per_second
+	}
+	
+	this.audio_bytes_decoded_per_second_.push(audio_p);
 }
 
 Monitor.prototype.audio_bytes_decoded_per_second = function() {
@@ -348,8 +390,8 @@ Monitor.prototype.stop_buffer_monitor = function() {
 	clearInterval(this.timer_for_buffer_monitor_);
 }
 
-Monitor.prototype.store_time_in_buffer = function(interval, seconds_available) {
-	this.seconds_available_to_play_in_buffer_.push({'first':interval,'second': seconds_available});
+Monitor.prototype.store_time_in_buffer = function(buffer_obj) {
+	this.seconds_available_to_play_in_buffer_.push(buffer_obj);
 }
 
 Monitor.prototype.time_in_buffer = function() {
@@ -371,12 +413,25 @@ Monitor.prototype.start_buffer_monitor = function(check_interval_in_miliseconds)
 
 				for(var i = 0; i <  self.video_element_.buffered.length; i++) {
 					if(current_play_position >=  self.video_element_.buffered.start(i) && current_play_position <=  self.video_element_.buffered.end(i)) {
-						self.store_time_in_buffer(current_play_position, self.video_element_.buffered.end(i) - current_play_position);
+						var buffer_p = {
+							current_video_position : current_play_position,
+				            timestamp_of_time : Date.now(),
+				            remaining_time_in_buffer : self.video_element_.buffered.end(i) - current_play_position
+						};
+
+						self.store_time_in_buffer(buffer_p);
 						has_time = true;
 					}
 				}
-				if(has_time == false)
-					self.store_time_in_buffer(current_play_position, 0);
+				if(has_time == false) {
+					var buffer_p = {
+						current_video_position : current_play_position,
+				        timestamp_of_time : Date.now(),
+				        remaining_time_in_buffer : 0
+					};
+
+					self.store_time_in_buffer(buffer_p);
+				}
 			}
 		}
 	}, check_interval_in_miliseconds);
@@ -434,7 +489,13 @@ Monitor.prototype.start_muted_and_volume_monitor = function(check_interval_in_mi
 				var muted_now = self.video_element_.muted;
 
 				if(volume_now != self.previous_volume_) {
-					self.volume_at_time_.push({'first':self.video_element_.currentTime, 'second' : volume_now});
+					var volume_p = {
+						current_video_position : self.video_element_.currentTime,
+			            timestamp_of_volume : Date.now(),
+			            volume : volume_now
+
+					};
+					self.volume_at_time_.push(volume_p);
 					self.previous_volume_ = volume_now;
 				}
 
@@ -446,8 +507,13 @@ Monitor.prototype.start_muted_and_volume_monitor = function(check_interval_in_mi
 					mute_state = 0;
 
 				if(self.previous_mute_ != mute_state) {
-					console.log("MUDEI");
-					self.mute_state_at_time_.push({'first':self.video_element_.currentTime, 'second' : mute_state});
+					var mute_state_p = {
+						  timestamp_of_mute_state : Date.now(),
+			              current_video_position : self.video_element_.currentTime,
+			              state: mute_state
+					};
+					self.mute_state_at_time_.push(mute_state_p);
+
 					self.previous_mute_ = mute_state;
 				}
 			}
@@ -486,7 +552,12 @@ Monitor.prototype.start_network_state_monitor = function(check_interval_in_milis
 				var current_network_state = self.video_element_.networkState;
 
 				if(current_network_state != self.previous_network_state_) {
-					self.network_state_at_time_.push({'first':self.video_element_.currentTime, 'second' : current_network_state});
+					var network_p = {
+						timestamp_of_network_state : Date.now(),
+            			current_video_position : self.video_element_.currentTime,
+            			state: current_network_state
+              		};
+					self.network_state_at_time_.push(network_p);
 					self.previous_network_state_ = current_network_state;
 				}
 
@@ -533,27 +604,38 @@ Monitor.prototype.video_source = function() {
 
 Monitor.prototype.json = function() {
 	var return_object = {};
-	
+	return_object["start_timestamp"] = this.start_timestamp;
+	return_object["netmetric"] = this.netmetric;
+	return_object["left_time"] = this.get_left_time();
+	return_object["video_preload"] = this.video_element_.preload;
 	return_object["total_played_time"] = this.total_played_time();
-	return_object["played_time_interval"] = this.played_time();
 	return_object["total_played_time_with_stall"] = this.total_played_time_with_stall();
 	return_object["total_stall_length"] = this.total_stall_length();
 	return_object["total_number_of_stall"] = this.total_number_of_stall();
-	return_object["length_of_each_stall"] = this.length_of_each_stall();
-	return_object["video_duration"] = this.video_duration();
-	return_object["playback_quality"] = this.playback_quality();
-	return_object["frame_per_second"] = this.frame_per_second();
-	return_object["video_bytes_decoded_per_second"] = this.video_bytes_decoded_per_second();
-	return_object["audio_bytes_decoded_per_second"] = this.audio_bytes_decoded_per_second();
 	return_object["dropped_frames"] = this.get_dropped_frames();
-	return_object["time_in_buffer"] = this.time_in_buffer();
-	return_object["buffer_time"] = this.buffer_time();
+	return_object["video_duration"] = this.video_duration();
+
+	var stall_result = this.length_of_each_stall();
+
+	if(this.loading_time_ && stall_result.length > 0)
+		return_object["video_start_time"] = stall_result[0].duration_of_stall;
+	else
+		return_object["video_start_time"] = 0;
+		
+	return_object["length_of_each_stall"] = this.length_of_each_stall();
+	return_object["playback_quality"] = this.playback_quality();
 	return_object["mute_state"] = this.mute_state();
 	return_object["volume_at_time"] = this.volume_at_time();
-	return_object["video_preload"] = this.video_element_.preload;
+	return_object["played_time_interval"] = this.played_time();
+	return_object["buffer_time"] = this.buffer_time();
+	return_object["video_bytes_decoded_per_second"] = this.video_bytes_decoded_per_second();
+	return_object["audio_bytes_decoded_per_second"] = this.audio_bytes_decoded_per_second();
+	return_object["time_in_buffer"] = this.time_in_buffer();
 	return_object["video_source"] = this.video_source();
 	return_object["network_state_at_time"] = this.network_state_at_time();
-	return_object["left_time"] = this.get_left_time();
+	return_object["frame_per_second"] = this.frame_per_second();
 	
+	console.log(return_object);
+
 	return return_object;
 }

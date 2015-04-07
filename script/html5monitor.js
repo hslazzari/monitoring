@@ -24,7 +24,7 @@ while(document.getElementsByTagName('video').length == 0) {
 
 function start_monitor() {
 
-	var send_to_server = false;
+	var send_to_server = true;
 
 	
 
