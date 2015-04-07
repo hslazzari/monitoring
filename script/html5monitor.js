@@ -25,6 +25,8 @@ while(document.getElementsByTagName('video').length == 0) {
 function start_monitor() {
 
 	var send_to_server = true;
+	var has_already_sent_to_server = false;
+
 
 	
 
@@ -34,7 +36,26 @@ function start_monitor() {
 		var video_element = document.getElementsByTagName('video')[0];
 		var time_interval = 1000; //In miliseconds
 		var monitor = new Monitor(video_element, url);
-		
+
+		 $(window).on('beforeunload', function() {
+			monitor.set_left_time();
+			monitor.stop_all_monitoring();
+			if(send_to_server && !has_already_sent_to_server) {
+				var dt = JSON.stringify(monitor.json());
+				has_already_sent_to_server = true;
+			
+				chrome.runtime.sendMessage({
+			    action: 'xhttp',
+			    url: "http://0.0.0.0:3000/api/users",
+				type: "POST",
+				data: dt,
+				},  function(responseText) {
+			    });
+			}
+			return undefined;
+
+		});
+
 		//Start all monitoring process
 		monitor.start_all_monitoring(time_interval, 50);
 			
@@ -45,7 +66,8 @@ function start_monitor() {
 			console.log(monitor.json());
 			var dt = JSON.stringify(monitor.json());
 			
-			if(send_to_server) {
+			if(send_to_server && !has_already_sent_to_server) {
+				has_already_sent_to_server = true;
 				chrome.runtime.sendMessage({
 			    action: 'xhttp',
 			    url: "http://0.0.0.0:3000/api/users",
@@ -87,7 +109,6 @@ function start_monitor() {
 		        });
 			*/
 
-			//$.post("http://0.0.0.0:3000/stall", { 'id': id_, 'numberOfStalls': stall , 'stall': JSON.stringfy(lengthofStall)});
 		});
 
 	}
