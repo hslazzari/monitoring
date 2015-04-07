@@ -246,6 +246,7 @@ CREATE TABLE `skip_play` (
   `current_video_position` float NOT NULL,
   `timestamp_of_skip` bigint(64) NOT NULL,
   `video_information_id` int(11) NOT NULL,
+  `skip_duration` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -411,4 +412,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-04-06 23:59:19
+-- Dump completed on 2015-04-07  9:17:22

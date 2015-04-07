@@ -1,5 +1,5 @@
 var express = require('express');
-var mongoose = require('mongoose');
+//var mongoose = require('mongoose');
 var bodyParser = require("body-parser");
 var app = express()
 
@@ -207,6 +207,7 @@ function insert_into_skip_play(req, video_id) {
     var info  = { 
               current_video_position : req.body.skip_play[i].current_video_position,
               timestamp_of_skip : req.body.skip_play[i].timestamp_of_skip,
+              skip_duration : req.body.skip_play[i].skip_duration,
               video_information_id : video_id
     };
 
@@ -403,7 +404,7 @@ app.post('/api/users', function (req, res){
   insert_into_video_bytes_decoded_per_second(req, video_id);
   insert_into_audio_bytes_decoded_per_second(req, video_id);
   insert_into_time_in_buffer(req, video_id);
-  //insert_into_skip_play(req, video_id);
+  insert_into_skip_play(req, video_id);
   insert_into_played_interval(req, video_id);
   insert_into_playback_quality(req, video_id);
   insert_into_network_state(req, video_id);

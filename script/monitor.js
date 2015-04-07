@@ -1,7 +1,3 @@
-//$("video").videoHeight
-//document.getElementsByTagName("video")[0].addEventListener("loadedmetadata", function() {console.log("OI");}, false);
-
-
 /*
 
 - Qualidades disponíveis do vídeo
@@ -12,8 +8,6 @@
 - Tempo entre a requisição do vídeo e o início da reprodução
 - Tempo total que o usuário ficou no vídeo (para monitorarmos se o 
   cara assistiu até o final ou se abortou em X segundos)   DONE
-
-
 */
 
 function Monitor(video_element, url) {
@@ -94,6 +88,18 @@ function Monitor(video_element, url) {
 
 	// End information
 	this.left_time = -1;
+
+	// Skip monitor information
+
+	this.timer_for_skip_monitor_;
+	this.start_skip_ = false;
+	this.start_video_timestamp_ = Date.now();
+	this.start_video_position_ = 0;
+	this.previous_video_position_ = 0;
+	this.previous_video_timestamp_ = Date.now();
+	this.skip_info_ = [];
+						
+
 
 
 }
@@ -457,6 +463,7 @@ Monitor.prototype.stop_all_monitoring = function() {
 	this.stop_video_frames_monitor();
 	this.stop_muted_and_volume_monitor();
 	this.stop_network_state_monitor();
+	this.stop_skip_monitor();
 }
 
 Monitor.prototype.start_all_monitoring = function(interval_of_monitoring, duration_of_each_stall) {
@@ -470,6 +477,7 @@ Monitor.prototype.start_all_monitoring = function(interval_of_monitoring, durati
 	this.start_buffer_monitor(interval_of_monitoring);
 	this.start_muted_and_volume_monitor(interval_of_monitoring);
 	this.start_network_state_monitor(interval_of_monitoring);
+	this.start_skip_monitor();
 }
 
 Monitor.prototype.stop_muted_and_volume_monitor = function() {
@@ -568,6 +576,71 @@ Monitor.prototype.start_network_state_monitor = function(check_interval_in_milis
 }
 
 
+Monitor.prototype.store_skip_info = function(video_position, timestamp, skip_time) {
+	var skip_p = {
+		current_video_position : video_position,
+        timestamp_of_skip : timestamp,
+        skip_duration :  skip_time
+	};
+
+	this.skip_info_.push(skip_p);
+}
+
+Monitor.prototype.skip_info = function() {
+	return this.skip_info_;
+}
+
+
+Monitor.prototype.stop_skip_monitor = function() {
+	clearInterval(this.timer_for_skip_monitor_);
+}
+
+Monitor.prototype.start_skip_monitor = function() {
+	var self = this;
+
+	this.timer_for_skip_monitor_ = setInterval(function() {
+		
+		if(self.has_ended()) {
+			self.stop_skip_monitor();
+		}
+		else {
+			if(self.video_element_.currentTime != null) {
+				var current_play_position = self.video_element_.currentTime;
+				if(self.start_skip_ == true) {
+					if(Math.abs(current_play_position - self.previous_video_position_) <= 0.15 && Math.abs(current_play_position - self.previous_video_position_) > 0) {
+						self.start_skip_ = false;
+						self.store_skip_info(self.start_video_position_, self.start_video_timestamp_, self.video_element_.currentTime - self.start_video_position_);
+						self.previous_video_position_ = current_play_position;
+					} else {
+						self.previous_video_position_ = current_play_position;
+					}
+				}
+				else {
+					//console.log(Math.abs(current_play_position - self.previous_video_position_));
+					if(Math.abs(current_play_position - self.previous_video_position_) > 0.15 || Math.abs(current_play_position - self.previous_video_position_) == 0) {
+						self.start_skip_ = true;
+						
+					}
+					else {
+						self.previous_video_position_ = current_play_position;
+						self.start_video_timestamp_ = Date.now();
+						self.start_video_position_ = current_play_position;
+					}
+				}
+
+
+
+				
+			}
+		}
+	
+	}, 100);
+}
+
+
+
+
+
 
 Monitor.prototype.network_state_at_time = function() {
 	return this.network_state_at_time_;
@@ -634,8 +707,8 @@ Monitor.prototype.json = function() {
 	return_object["video_source"] = this.video_source();
 	return_object["network_state_at_time"] = this.network_state_at_time();
 	return_object["frame_per_second"] = this.frame_per_second();
+	return_object["skip_play"] = this.skip_info();
 	
-	console.log(return_object);
-
+	
 	return return_object;
 }

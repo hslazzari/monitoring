@@ -1,11 +1,3 @@
-init
+Init server:
 
-
-sudo mongod
-node app2.js 
-
-mongo
-db.dropDatabase()
-
-
-
+node server.js
