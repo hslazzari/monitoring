@@ -14,7 +14,7 @@ function Monitor(video_element, url) {
 	console.log("Created Monitor");
 	
 	this.start_timestamp = Date.now();
-	this.netmetric = null;
+	this.netmetric_ = null;
 
 	this.video_element_ = video_element;
 	console.log(this.video_element_);
@@ -673,12 +673,14 @@ Monitor.prototype.video_source = function() {
 
 }
 
-
+Monitor.prototype.setNetmetricId = function(netmetric) {
+	this.netmetric_ = netmetric;
+}
 
 Monitor.prototype.json = function() {
 	var return_object = {};
 	return_object["start_timestamp"] = this.start_timestamp;
-	return_object["netmetric"] = this.netmetric;
+	return_object["netmetric"] = this.netmetric_;
 	return_object["left_time"] = this.get_left_time();
 	return_object["video_preload"] = this.video_element_.preload;
 	return_object["total_played_time"] = this.total_played_time();

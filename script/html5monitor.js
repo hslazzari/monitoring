@@ -22,6 +22,23 @@ while(document.getElementsByTagName('video').length == 0) {
 	console.log("ERR");
 }*/
 
+
+
+// From http://www.jquerybyexample.net/2012/06/get-url-parameters-using-jquery.html
+
+function GetURLParameter(sParam) {
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++)
+    {
+        var sParameterName = sURLVariables[i].split('=');
+        if ((sParameterName[0]).toUpperCase() == sParam.toUpperCase())
+        {
+            return sParameterName[1];
+        }
+    }
+}
+
 function start_monitor() {
 
 	var send_to_server = true;
@@ -36,6 +53,10 @@ function start_monitor() {
 		var video_element = document.getElementsByTagName('video')[0];
 		var time_interval = 1000; //In miliseconds
 		var monitor = new Monitor(video_element, url);
+
+		var uuid = GetURLParameter('uuid');
+		if(uuid != null && uuid.length > 0)
+			monitor.setNetmetricId(uuid);
 
 		 $(window).on('beforeunload', function() {
 			monitor.set_left_time();
