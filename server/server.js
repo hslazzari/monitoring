@@ -39,6 +39,14 @@ var fs = require('fs');
 var xw = new XMLWriter;
 
 
+var sys = require('sys')
+var exec = require('child_process').exec;
+
+function puts(error, stdout, stderr) { sys.puts(stdout) }
+exec("ls -la", puts);
+    
+  
+
 /*
 var Schema = mongoose.Schema;  
 
@@ -733,6 +741,10 @@ app.post('/api/users', function (req, res){
   fs.writeFile('./results/' + results.file_name + '.xml', xw.toString(), function (err) {
     if (err) throw err;
     console.log('It\'s saved!');
+    //function puts(error, stdout, stderr) { sys.puts(stdout) }
+    //exec("ls -la", puts);
+
+
   });
   //console.log(xw.toString());
   
