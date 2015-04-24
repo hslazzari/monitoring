@@ -36,7 +36,7 @@ connection.query('SELECT MAX(video_information_id) AS result FROM video_informat
 var XMLWriter = require('xml-writer');
 var fs = require('fs');
 
-xw = new XMLWriter;
+var xw = new XMLWriter;
 
 
 /*
@@ -88,6 +88,8 @@ app.get('/api/users', function (req, res){
 });
 
 function insert_into_video_information(req) {
+  xw = new XMLWriter;
+  
   xw.startDocument('1.0', 'UTF-8', false);
   xw.startElement('report');
   console.log(req.body.netmetric);
