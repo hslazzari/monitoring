@@ -3,7 +3,7 @@
   "description": "HTML5 video QoE monitoring plugin",
   "version": "1.0",
   "permissions": [
-    "tabs", "http://*/*", "https://*/*", "activeTab"
+    "tabs", "http://*/*", "https://*/*", "activeTab", "storage"
   ],
   "browser_action": {
       "default_title": "Monitoring status",
@@ -26,6 +26,7 @@
                   "js/bootstrap-dialog.js",
                   "js/bootstrap-dialog.min.js",
                   "script/Chart.js",
+                  "script/jquery.raty.js",
                   "script/monitor.js",
                   "script/html5monitor.js"
               ]
@@ -38,5 +39,13 @@
                       "script/background.js"
                    ],
         "persistent": false
-  }
+  },
+
+  "web_accessible_resources" : [
+    "remote.html",
+    "star-on.png",
+    "star-off.png"
+  ],
+
+  "options_page": "options.html"
 }
