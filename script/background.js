@@ -6,36 +6,50 @@
  *  data  : data to send in a POST request
  *
  * The callback function is called upon completion of the request */
-chrome.runtime.onMessage.addListener(function(request, sender, callback) {
+
+var config = null;
+
+chrome.storage.sync.get({
+    endereco: "http://0.0.0.0:3000",
+    monitorar: true,
+    questionario: true,
+    relatorio: false
+}, function(items) {
+        config = items;
+        console.log(config);
+});
+
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+        for (key in changes) {
+          var storageChange = changes[key];
+          config[key] = storageChange.newValue;
+
+        }
+
+        console.log(config);
+});
+
+    
+
+
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     console.log(request);
 
     if (request.action == "xhttp") {
 
         $.ajax({
-            url: "http://0.0.0.0:3000/api/users",
+            url: request.url,
             type: "POST",
             data: request.data,
             contentType: "application/json",
         });
         console.log(request.data);
-        /*
-        var xhttp = new XMLHttpRequest();
-        var method = request.method ? request.method.toUpperCase() : 'GET';
+        
+    }
 
-        xhttp.onload = function() {
-            callback(xhttp.responseText);
-        };
-        xhttp.onerror = function() {
-            // Do whatever you want on error. Don't forget to invoke the
-            // callback to clean up the communication port.
-            callback();
-        };
-        xhttp.open(method, request.url, true);
-        if (method == 'POST') {
-            xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        }
-        xhttp.send(request.data);
-        return true; // prevents the callback from being called too early on return
-    */
+    if(request.action == "getPreferences") {
+        sendResponse(config);
     }
 });
+
