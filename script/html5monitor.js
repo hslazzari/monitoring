@@ -32,6 +32,18 @@ function normalize(c) {
 var config = null;
 var $link = null;
 
+function send_questionario(json, opinion) {
+	var return_object = {};
+	return_object["opinion"] = opinion;
+	return_object["rating"] = $('#rating').raty('score');
+	return_object["conteudo"] = $("#conteudo").val();
+	return_object["diario"] = $("#diario").val();
+	return_object["idade"] = $("#idade").val();
+	return_object["sexo"] = $('input[name="sex"]:checked').val();
+	return_object["pais"] = $("#pais").val();
+	return_object["comment"] = $("#comment").val();
+}
+
 function local_save_questionario(timestamp, opinion) {
 	$("body").append("<a href='' id='dataLink2' download='questionario-"+ timestamp + ".csv'></a>");
 	$link2 = $("#dataLink2");
@@ -323,7 +335,7 @@ function start_monitor(configuration) {
 			
 				chrome.runtime.sendMessage({
 			    action: 'xhttp',
-			    url: configuration.endereco,
+			    url: configuration.endereco + "/api/monitor",
 				type: "POST",
 				data: dt,
 				},  function(responseText) {
@@ -351,7 +363,7 @@ function start_monitor(configuration) {
 				has_already_sent_to_server = true;
 				chrome.runtime.sendMessage({
 			    action: 'xhttp',
-			    url: configuration.endereco,
+			    url: configuration.endereco + "/api/monitor",
 				type: "POST",
 				data: dt,
 				},  function(responseText) {

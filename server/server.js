@@ -79,7 +79,8 @@ var UserQoE = new Schema({
 
 //mongoose.connect( 'mongodb://localhost/user_qoe' );
 
-app.get('/api/users', function (req, res){
+app.get('/api/monitor', function (req, res){
+  
   /*
 
     UserQoEModel.find({}, function (err, docs) {
@@ -691,7 +692,7 @@ function insert_into_buffer_interval(req, video_id) {
 
 
 
-app.post('/api/users', function (req, res){
+app.post('/api/monitor', function (req, res){
   console.log("Info received");
   /*
   userqoe = new UserQoEModel({
@@ -761,6 +762,57 @@ app.post('/api/users', function (req, res){
 */
 
 });
+
+
+
+
+
+
+
+
+
+app.post('/api/questionario', function (req, res){
+  console.log("Info received");
+
+  return_object = {};
+
+  return_object["idade"] = 10;
+
+  res.json(JSON.stringify(return_object));
+
+ 
+  
+  /*
+  var results = insert_into_video_information(req);
+  var video_id = results.video_id;
+
+  insert_into_video_source(req, video_id);
+  insert_into_volume_state(req, video_id);
+  insert_into_video_bytes_decoded_per_second(req, video_id);
+  insert_into_audio_bytes_decoded_per_second(req, video_id);
+  insert_into_time_in_buffer(req, video_id);
+  insert_into_skip_play(req, video_id);
+  insert_into_played_interval(req, video_id);
+  insert_into_playback_quality(req, video_id);
+  insert_into_network_state(req, video_id);
+  insert_into_mute_state(req, video_id);
+  insert_into_length_of_stall(req, video_id);
+  insert_into_frame_per_second(req, video_id);
+  insert_into_buffer_interval(req, video_id);
+  xw.endDocument();
+ 
+  fs.writeFile('./results/' + results.file_name + '.xml', xw.toString(), function (err) {
+    if (err) throw err;
+    console.log('It\'s saved!');
+ 
+  });
+
+*/
+ 
+
+});
+
+
 
 
 

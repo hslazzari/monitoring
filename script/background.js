@@ -25,15 +25,18 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
         for (key in changes) {
           var storageChange = changes[key];
           config[key] = storageChange.newValue;
-
         }
-
 });
+/*
+    $.ajax({
+            url: "http://0.0.0.0:3000/api/questionario",
+            type: "POST",
+            data: "",
+            contentType: "application/json", success: function(result) {var f = $.parseJSON(result); console.log(f.idade)}
+});
+Object {readyState: 1}
 
-    
-
-
-
+*/
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     console.log(request);
 
@@ -48,7 +51,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         console.log(request.data);
         
     }
-
+    
     if(request.action == "getPreferences") {
         sendResponse(config);
     }
