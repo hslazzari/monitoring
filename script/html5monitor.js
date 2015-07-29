@@ -13,13 +13,229 @@ function normalize(c) {
 		c.relatorio = true;
 	if(c.relatorio == "false")
 		c.relatorio = false;
+
+	console.log(c);
+
+	c.intervalo_minimo_de_stall = Number(c.intervalo_minimo_de_stall);
+    c.intervalo_de_monitoramento = Number(c.intervalo_de_monitoramento);
+
+
+    if(c.enviar_para_servidor == "true")
+    	c.enviar_para_servidor = true;
+    if(c.enviar_para_servidor == "false")
+    	c.enviar_para_servidor = false;
+
+    console.log(c);
+
+}
+
+var config = null;
+var $link = null;
+
+function local_save_questionario(timestamp, opinion) {
+	$("body").append("<a href='' id='dataLink2' download='questionario-"+ timestamp + ".csv'></a>");
+	$link2 = $("#dataLink2");
+	var saveFile = "Global,Rating,Conteudo,Tempo,Diario,Idade,Sexo,Pais,Comentarios\n";
+
+	saveFile = saveFile + opinion + ",";
+
+	saveFile = saveFile + $('#rating').raty('score') + ",";
+
+	saveFile = saveFile + $("#conteudo").val() + ",";
+
+	saveFile = saveFile + $('input[name="tempo"]:checked').val() + ",";
+
+	saveFile = saveFile + $("#diario").val() + ",";
+
+	saveFile = saveFile + $("#idade").val() + ",";
+
+	saveFile = saveFile + $('input[name="sex"]:checked').val() + ",";
+
+	saveFile = saveFile + $("#pais").val() + ",";
+
+	saveFile = saveFile + $("#comment").val() + ",";
+	console.log(saveFile);
+
+	$link2.attr("href", 'data:Application/octet-stream,' + encodeURIComponent(saveFile))[0].click();
+}
+
+function local_save(result) {
+
+	$("body").append("<a href='' id='dataLink' download='resultados-"+ result.start_timestamp + ".csv'></a>");
+	$link = $("#dataLink");
+
+
+	var saveFile = "Start timestamp,Netmetric,Left time,Video preload,Total played time,Total played time with stall,Total stall length,Total number of stall,Dropped frames,Video duration,Video start time\n";
+	saveFile = saveFile + result.start_timestamp + ",";
+	saveFile = saveFile + result.netmetric + ",";
+	saveFile = saveFile + result.left_time + ",";
+	saveFile = saveFile + result.video_preload + ",";
+	saveFile = saveFile + result.total_played_time + ",";
+	saveFile = saveFile + result.total_played_time_with_stall + ",";
+	saveFile = saveFile + result.total_stall_length + ",";
+	saveFile = saveFile + result.total_number_of_stall + ",";
+	saveFile = saveFile + result.dropped_frames + ",";
+	saveFile = saveFile + result.video_duration + ",";
+	saveFile = saveFile + result.video_start_time + "\n\n";
+
+	
+	saveFile = saveFile + "Length of each stall\n";
+	saveFile = saveFile + "Video position,Timestamp,Duration of stall\n";
+	for(var i = 0; i < result.length_of_each_stall.length; i++) {
+		saveFile = saveFile + result.length_of_each_stall[i].current_video_position + ",";
+		saveFile = saveFile + result.length_of_each_stall[i].timestamp_of_stall+ ",";
+		saveFile = saveFile + result.length_of_each_stall[i].duration_of_stall + ",";
+		saveFile = saveFile + "\n";
+
+	}
+
+	saveFile = saveFile + "\n";
+	
+
+	saveFile = saveFile + "Volume at time\n";
+	saveFile = saveFile + "Video position,Timestamp,Volume\n";
+	for(var i = 0; i < result.volume_at_time.length; i++) {
+		saveFile = saveFile + result.volume_at_time[i].current_video_position + ",";
+		saveFile = saveFile + result.volume_at_time[i].timestamp_of_volume+ ",";
+		saveFile = saveFile + result.volume_at_time[i].volume + ",";
+		saveFile = saveFile + "\n";
+	}
+
+
+	saveFile = saveFile + "\n";
+	saveFile = saveFile + "Playback quality\n";
+	saveFile = saveFile + "Video position,Timestamp,Width,Height\n";
+	for(var i = 0; i < result.playback_quality.length; i++) {
+		saveFile = saveFile + result.playback_quality[i].current_video_position + ",";
+		saveFile = saveFile + result.playback_quality[i].timestamp_of_quality+ ",";
+		saveFile = saveFile + result.playback_quality[i].video_width + ",";
+		saveFile = saveFile + result.playback_quality[i].video_height + ",";
+		
+		saveFile = saveFile + "\n";
+	}
+
+
+	saveFile = saveFile + "\n";
+	saveFile = saveFile + "Mute state\n";
+	saveFile = saveFile + "Video position,Timestamp,State\n";
+	for(var i = 0; i < result.mute_state.length; i++) {
+		saveFile = saveFile + result.mute_state[i].current_video_position + ",";
+		saveFile = saveFile + result.mute_state[i].timestamp_of_mute_state+ ",";
+		saveFile = saveFile + result.mute_state[i].state + ",";
+		
+		saveFile = saveFile + "\n";
+	}
+
+
+
+	saveFile = saveFile + "\n";
+	saveFile = saveFile + "Played time interval\n";
+	saveFile = saveFile + "Start,End\n";
+	for(var i = 0; i < result.played_time_interval.length; i++) {
+		saveFile = saveFile + result.played_time_interval[i].start + ",";
+		saveFile = saveFile + result.played_time_interval[i].end + ",";
+		
+		saveFile = saveFile + "\n";
+	}
+
+	saveFile = saveFile + "\n";
+	saveFile = saveFile + "Buffer time\n";
+	saveFile = saveFile + "Start,End\n";
+	for(var i = 0; i < result.buffer_time.length; i++) {
+		saveFile = saveFile + result.buffer_time[i].start + ",";
+		saveFile = saveFile + result.buffer_time[i].end + ",";
+		
+		saveFile = saveFile + "\n";
+	}
+
+		
+	saveFile = saveFile + "\n";
+	saveFile = saveFile + "Video bytes decoded per second\n";
+	saveFile = saveFile + "Video position,Timestamp,Bytes decoded\n";
+	for(var i = 0; i < result.video_bytes_decoded_per_second.length; i++) {
+		saveFile = saveFile + result.video_bytes_decoded_per_second[i].current_video_position + ",";
+		saveFile = saveFile + result.video_bytes_decoded_per_second[i].timestamp_of_video_bytes_decoded+ ",";
+		saveFile = saveFile + result.video_bytes_decoded_per_second[i].video_bytes + ",";
+		
+		saveFile = saveFile + "\n";
+	}
+
+
+	saveFile = saveFile + "\n";
+	saveFile = saveFile + "Audio bytes decoded per second\n";
+	saveFile = saveFile + "Video position,Timestamp,Bytes decoded\n";
+	for(var i = 0; i < result.audio_bytes_decoded_per_second.length; i++) {
+		saveFile = saveFile + result.audio_bytes_decoded_per_second[i].current_video_position + ",";
+		saveFile = saveFile + result.audio_bytes_decoded_per_second[i].timestamp_of_audio_bytes_decoded+ ",";
+		saveFile = saveFile + result.audio_bytes_decoded_per_second[i].audio_bytes + ",";
+		
+		saveFile = saveFile + "\n";
+	}
+
+
+	saveFile = saveFile + "\n";
+	saveFile = saveFile + "Time in buffer\n";
+	saveFile = saveFile + "Video position,Timestamp,Remaining time in buffer\n";
+	for(var i = 0; i < result.time_in_buffer.length; i++) {
+		saveFile = saveFile + result.time_in_buffer[i].current_video_position + ",";
+		saveFile = saveFile + result.time_in_buffer[i].timestamp_of_time + ",";
+		saveFile = saveFile + result.time_in_buffer[i].remaining_time_in_buffer + ",";
+		
+		saveFile = saveFile + "\n";
+	}
+
+
+	saveFile = saveFile + "\n";
+	saveFile = saveFile + "Video Source\n";
+	saveFile = saveFile + "Index,Source\n";
+	for(var i = 0; i < result.video_source.length; i++) {
+		saveFile = saveFile + i + "," + result.video_source[i] + ",";
+
+		saveFile = saveFile + "\n";
+	}
+
+	saveFile = saveFile + "\n";
+	saveFile = saveFile + "Network state at time\n";
+	saveFile = saveFile + "Video position,Timestamp,State\n";
+	for(var i = 0; i < result.network_state_at_time.length; i++) {
+		saveFile = saveFile + result.network_state_at_time[i].current_video_position + ",";
+		saveFile = saveFile + result.network_state_at_time[i].timestamp_of_network_state + ",";
+		saveFile = saveFile + result.network_state_at_time[i].state + ",";
+		
+		saveFile = saveFile + "\n";
+	}
+
+	saveFile = saveFile + "\n";
+	saveFile = saveFile + "Frames per second\n";
+	saveFile = saveFile + "Video position,Timestamp,Number of frames\n";
+	for(var i = 0; i < result.frame_per_second.length; i++) {
+		saveFile = saveFile + result.frame_per_second[i].current_video_position + ",";
+		saveFile = saveFile + result.frame_per_second[i].timestamp_of_frame + ",";
+		saveFile = saveFile + result.frame_per_second[i].number_of_frames + ",";
+		
+		saveFile = saveFile + "\n";
+	}
+
+
+	saveFile = saveFile + "\n";
+	saveFile = saveFile + "Skip play\n";
+	saveFile = saveFile + "Video position,Timestamp,Duration of skip\n";
+	for(var i = 0; i < result.skip_play.length; i++) {
+		saveFile = saveFile + result.skip_play[i].current_video_position + ",";
+		saveFile = saveFile + result.skip_play[i].timestamp_of_skip + ",";
+		saveFile = saveFile + result.skip_play[i].skip_duration + ",";
+		
+		saveFile = saveFile + "\n";
+	}
+
+	$link.attr("href", 'data:Application/octet-stream,' + encodeURIComponent(saveFile))[0].click();
 }
 
 $(document).ready(function() {
 
 	var counter = 0;
 	var wait_tree_seconds;
-	var config = null;
+	
 
 	chrome.runtime.sendMessage({
 			    action: 'getPreferences'
@@ -37,6 +253,8 @@ $(document).ready(function() {
 			clearInterval(wait_tree_seconds);
 			
 			normalize(config);
+
+			console.log(config);
 
 			
 			
@@ -79,26 +297,17 @@ function GetURLParameter(sParam) {
 
 function start_monitor(configuration) {
 
-	var send_to_server = true;
+	var send_to_server = configuration.enviar_para_servidor;
 	var has_already_sent_to_server = false;
 
 
-	/*
-						console.log(response.endereco);
-				    	console.log(response.monitorar);
-				        console.log(response.questionario);
-				        console.log(response.relatorio);
-
-
-
-	*/
 	
 
 	if(document.getElementsByTagName('video')[0] != null) {
 
 		var url = document.URL;
 		var video_element = document.getElementsByTagName('video')[0];
-		var time_interval = 1000; //In miliseconds
+		var time_interval = configuration.intervalo_de_monitoramento; //In miliseconds
 		var monitor = new Monitor(video_element, url);
 
 		var uuid = GetURLParameter('uuid');
@@ -125,13 +334,17 @@ function start_monitor(configuration) {
 		});
 
 		//Start all monitoring process
-		monitor.start_all_monitoring(time_interval, 50);
+
+		monitor.start_all_monitoring(time_interval, configuration.intervalo_minimo_de_stall);
 			
 		
 
 		document.getElementsByTagName('video')[0].addEventListener("ended", function() {
 			monitor.stop_all_monitoring();
 			console.log(monitor.json());
+			if(configuration.relatorio) {
+				local_save(monitor.json());
+			}
 			var dt = JSON.stringify(monitor.json());
 			
 			if(send_to_server && !has_already_sent_to_server) {
@@ -152,25 +365,20 @@ function start_monitor(configuration) {
 				if(configuration.questionario) {
 					BootstrapDialog.show({
 		    			title: "Qualidade de experiência",
-			            //message: 'Como foi sua experiência durante a exibição do vídeo?<form class="form-horizontal" role="form"><div class="form-group"><label class="control-label col-sm-2" for="email">Email:</label><div class="col-sm-10"><input type="email" class="form-control" id="email" placeholder="Enter email"></div></div><div class="form-group"><label class="control-label col-sm-2" for="pwd">Password:</label><div class="col-sm-10"><input type="password" class="form-control" id="pwd" placeholder="Enter password"></div></div><div class="form-group"><div class="col-sm-offset-2 col-sm-10"><div class="checkbox"><label><input type="checkbox"> Remember me</label></div></div></div><div class="form-group"><div class="col-sm-offset-2 col-sm-10"><button type="submit" class="btn btn-default">Submit</button></div></div></form>',
 			            message: $('<div></div>').load(chrome.extension.getURL("remote.html")),
 			            buttons: [{
 			            	label: 'Boa',
 			                cssClass: 'btn-primary',
-			                action: function(){
-			                    //alert('Hi Orange!');
-			                   // saveFile = saveFile + "Opinion,Good" + '\n';
-			                   // $link.attr("href", 'data:Application/octet-stream,' + encodeURIComponent(saveFile))[0].click();
-				
+			                action: function(dialogItself){
+								local_save_questionario(monitor.json().start_timestamp, "Boa");
+								dialogItself.close();
 			                }
 			            }, {
 			                label: 'Ruim',
 			                cssClass: 'btn-danger',
-			                action: function(){
-			                    //alert('Hi Orange!');
-			                   // saveFile = saveFile + "Opinion,Ruim" + '\n';
-			                   // $link.attr("href", 'data:Application/octet-stream,' + encodeURIComponent(saveFile))[0].click();
-				
+			                action: function(dialogItself){
+								local_save_questionario(monitor.json().start_timestamp, "Ruim");
+								dialogItself.close();
 			                }
 			            }, {
 			                label: 'Cancelar',

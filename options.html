@@ -42,10 +42,15 @@
     <input type="text" class="form-control" id="endereco" placeholder="http://0.0.0.0:3000">
   </div>
 
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" id="enviar_para_servidor" checked> Enviar resultados
+    </label>
+  </div>
   
 
   <div class="form-group">
-     <label>Monitorar resultados:</label>
+     <label>Monitorar transmissões de vídeo em HTML5:</label>
      <div class="row">
       <div class="col-md-6">
         <input type="radio" name="monitorar" id="monitorar_t" value="true" checked> Sim
@@ -58,7 +63,7 @@
   
 
   <div class="form-group">
-     <label>Gerar questionário:</label>
+     <label>Gerar questionário após transmissão:</label>
      <div class="row">
       <div class="col-md-6">
         <input type="radio" name="questionario" id="questionario_t" value="true" checked> Sim
@@ -71,7 +76,7 @@
   <div class="form-group">
 
   <div class="form-group">
-     <label>Gerar relatório local:</label>
+     <label>Salvar relatório localmente:</label>
      <div class="row">
       <div class="col-md-6">
         <input type="radio" name="relatorio" id="relatorio_t" value="true"> Sim
@@ -83,8 +88,23 @@
   </div>
   <div class="form-group">
 
-  	
 
+<div class="form-group">
+	<label>Intervalo de monitoramento (milissegundos): </label>
+	<input type="number" class="form-control" min="100" max="100000" id="intervalo_de_monitoramento" placeholder="1000" value="1000">
+</div>
+
+
+<div class="form-group">
+	<label>Tempo mínimo de stall (milissegundos):</label>
+	<input type="number" class="form-control" min="50" max="1000" id="intervalo_minimo_de_stall" placeholder="50" value="50">
+</div>
+
+
+
+
+  	
+  <label id="status">&nbsp;</label>
   <button type="button" id="save" class="btn btn-primary pull-right">Salvar</button>
   
 </div>

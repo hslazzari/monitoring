@@ -13,10 +13,12 @@ chrome.storage.sync.get({
     endereco: "http://0.0.0.0:3000",
     monitorar: true,
     questionario: true,
-    relatorio: false
+    relatorio: false,
+    intervalo_minimo_de_stall : 50,
+    intervalo_de_monitoramento : 1000,
+    enviar_para_servidor : true
 }, function(items) {
         config = items;
-        console.log(config);
 });
 
 chrome.storage.onChanged.addListener(function(changes, namespace) {
@@ -26,7 +28,6 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
 
         }
 
-        console.log(config);
 });
 
     
