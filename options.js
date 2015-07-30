@@ -30,6 +30,8 @@ function normalize(c) {
 
 
 
+
+
 // Saves options to chrome.storage
 function save_options() {
   var ende = document.getElementById('endereco').value;
@@ -98,8 +100,26 @@ function restore_options() {
 
     $("#enviar_para_servidor").prop('checked', items.enviar_para_servidor);
 
+    refresh_page();
+
   });
 }
 document.addEventListener('DOMContentLoaded', restore_options);
 document.getElementById('save').addEventListener('click',
     save_options);
+
+
+function refresh_page() {
+      if($('input[name="monitorar"]:checked').val() == "true") {
+          $("#monitorando").css('visibility','visible');
+      } else {
+          $("#monitorando").css('visibility','hidden');
+      }
+};
+
+
+$('input[name="monitorar"]').change(function() {
+    refresh_page();
+});
+
+

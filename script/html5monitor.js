@@ -32,16 +32,26 @@ function normalize(c) {
 var config = null;
 var $link = null;
 
-function send_questionario(json, opinion) {
+function send_questionario(end, opinion) {
 	var return_object = {};
 	return_object["opinion"] = opinion;
 	return_object["rating"] = $('#rating').raty('score');
 	return_object["conteudo"] = $("#conteudo").val();
 	return_object["diario"] = $("#diario").val();
+	return_object["tempo"] = $('input[name="tempo"]:checked').val();
 	return_object["idade"] = $("#idade").val();
 	return_object["sexo"] = $('input[name="sex"]:checked').val();
 	return_object["pais"] = $("#pais").val();
 	return_object["comment"] = $("#comment").val();
+
+	chrome.runtime.sendMessage({
+		action: 'questionario',
+		url: end,
+		type: "POST",
+		data: return_object,
+	},  function(responseText) {
+	});
+
 }
 
 function local_save_questionario(timestamp, opinion) {
@@ -330,12 +340,12 @@ function start_monitor(configuration) {
 			monitor.set_left_time();
 			monitor.stop_all_monitoring();
 			if(send_to_server && !has_already_sent_to_server) {
-				var dt = JSON.stringify(monitor.json());
+				var dt = monitor.json();
 				has_already_sent_to_server = true;
 			
 				chrome.runtime.sendMessage({
-			    action: 'xhttp',
-			    url: configuration.endereco + "/api/monitor",
+			    action: 'monitor',
+			    url: configuration.endereco,
 				type: "POST",
 				data: dt,
 				},  function(responseText) {
@@ -357,13 +367,13 @@ function start_monitor(configuration) {
 			if(configuration.relatorio) {
 				local_save(monitor.json());
 			}
-			var dt = JSON.stringify(monitor.json());
+			var dt = monitor.json();
 			
 			if(send_to_server && !has_already_sent_to_server) {
 				has_already_sent_to_server = true;
 				chrome.runtime.sendMessage({
-			    action: 'xhttp',
-			    url: configuration.endereco + "/api/monitor",
+			    action: 'monitor',
+			    url: configuration.endereco,
 				type: "POST",
 				data: dt,
 				},  function(responseText) {
@@ -377,19 +387,32 @@ function start_monitor(configuration) {
 				if(configuration.questionario) {
 					BootstrapDialog.show({
 		    			title: "Qualidade de experiência",
-			            message: $('<div></div>').load(chrome.extension.getURL("remote.html")),
+		    			message: $('<div></div>').load(chrome.extension.getURL("remote.html")),
+		    			closable: true,
+			            closeByBackdrop: false,
+			            closeByKeyboard: false,
 			            buttons: [{
 			            	label: 'Boa',
 			                cssClass: 'btn-primary',
 			                action: function(dialogItself){
-								local_save_questionario(monitor.json().start_timestamp, "Boa");
+			                	if(configuration.relatorio) {
+									local_save_questionario(monitor.json().start_timestamp, "Boa");
+								}
+								if(configuration.enviar_para_servidor) {
+									send_questionario(configuration.endereco, "Boa");
+								}
 								dialogItself.close();
 			                }
 			            }, {
 			                label: 'Ruim',
 			                cssClass: 'btn-danger',
 			                action: function(dialogItself){
-								local_save_questionario(monitor.json().start_timestamp, "Ruim");
+								if(configuration.relatorio) {
+									local_save_questionario(monitor.json().start_timestamp, "Ruim");
+								}
+								if(configuration.enviar_para_servidor) {
+									send_questionario(configuration.endereco, "Ruim");
+								}
 								dialogItself.close();
 			                }
 			            }, {

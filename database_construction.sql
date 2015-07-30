@@ -32,7 +32,7 @@ CREATE TABLE `audio_bytes_decoded_per_second` (
   `audio_bytes` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,6 @@ CREATE TABLE `audio_bytes_decoded_per_second` (
 
 LOCK TABLES `audio_bytes_decoded_per_second` WRITE;
 /*!40000 ALTER TABLE `audio_bytes_decoded_per_second` DISABLE KEYS */;
-INSERT INTO `audio_bytes_decoded_per_second` VALUES (1,176.043,1438263884025,0,144999),(2,177.041,1438263885030,0,31650),(3,178.04,1438263886032,0,27969),(4,177.343,1438263901723,1,186953);
 /*!40000 ALTER TABLE `audio_bytes_decoded_per_second` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -59,7 +58,7 @@ CREATE TABLE `buffer_interval` (
   `video_information_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -68,7 +67,6 @@ CREATE TABLE `buffer_interval` (
 
 LOCK TABLES `buffer_interval` WRITE;
 /*!40000 ALTER TABLE `buffer_interval` DISABLE KEYS */;
-INSERT INTO `buffer_interval` VALUES (1,0,14.656,0),(2,172.8,178.214,0),(3,0,14.656,1),(4,172.8,178.214,1);
 /*!40000 ALTER TABLE `buffer_interval` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -87,7 +85,7 @@ CREATE TABLE `frame_per_second` (
   `number_of_frames` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -96,7 +94,6 @@ CREATE TABLE `frame_per_second` (
 
 LOCK TABLES `frame_per_second` WRITE;
 /*!40000 ALTER TABLE `frame_per_second` DISABLE KEYS */;
-INSERT INTO `frame_per_second` VALUES (1,176.043,1438263884025,0,107),(2,177.041,1438263885030,0,25),(3,178.04,1438263886032,0,23),(4,177.343,1438263901723,1,141);
 /*!40000 ALTER TABLE `frame_per_second` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -115,7 +112,7 @@ CREATE TABLE `length_of_stall` (
   `duration_of_stall` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -124,7 +121,6 @@ CREATE TABLE `length_of_stall` (
 
 LOCK TABLES `length_of_stall` WRITE;
 /*!40000 ALTER TABLE `length_of_stall` DISABLE KEYS */;
-INSERT INTO `length_of_stall` VALUES (1,175.788,1438263883684,0,0.104),(2,0,1438263899768,1,0.102),(3,176.484,1438263900642,1,0.26);
 /*!40000 ALTER TABLE `length_of_stall` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -143,7 +139,7 @@ CREATE TABLE `mute_state` (
   `video_information_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -152,7 +148,6 @@ CREATE TABLE `mute_state` (
 
 LOCK TABLES `mute_state` WRITE;
 /*!40000 ALTER TABLE `mute_state` DISABLE KEYS */;
-INSERT INTO `mute_state` VALUES (1,176.043,1438263884026,0,0),(2,176.484,1438263900723,0,1);
 /*!40000 ALTER TABLE `mute_state` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -172,7 +167,7 @@ CREATE TABLE `network_state` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -181,7 +176,6 @@ CREATE TABLE `network_state` (
 
 LOCK TABLES `network_state` WRITE;
 /*!40000 ALTER TABLE `network_state` DISABLE KEYS */;
-INSERT INTO `network_state` VALUES (1,176.043,1438263884026,1,0),(2,176.484,1438263900723,1,1);
 /*!40000 ALTER TABLE `network_state` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -201,7 +195,7 @@ CREATE TABLE `playback_quality` (
   `video_information_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -210,7 +204,6 @@ CREATE TABLE `playback_quality` (
 
 LOCK TABLES `playback_quality` WRITE;
 /*!40000 ALTER TABLE `playback_quality` DISABLE KEYS */;
-INSERT INTO `playback_quality` VALUES (1,1438263884024,0,1280,720,0),(2,1438263900721,0,1280,720,1);
 /*!40000 ALTER TABLE `playback_quality` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -229,7 +222,7 @@ CREATE TABLE `played_interval` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -238,7 +231,6 @@ CREATE TABLE `played_interval` (
 
 LOCK TABLES `played_interval` WRITE;
 /*!40000 ALTER TABLE `played_interval` DISABLE KEYS */;
-INSERT INTO `played_interval` VALUES (1,0,0.719245,0),(2,175.788,178.214,0),(3,0,0.742464,1),(4,176.484,178.214,1);
 /*!40000 ALTER TABLE `played_interval` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -262,7 +254,6 @@ CREATE TABLE `questionario` (
   `pais` varchar(45) DEFAULT NULL,
   `tempo` int(11) DEFAULT NULL,
   `comentario` varchar(300) DEFAULT NULL,
-  `opinion` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`idquestionario`),
   UNIQUE KEY `idquestionario_UNIQUE` (`idquestionario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -292,7 +283,7 @@ CREATE TABLE `skip_play` (
   `skip_duration` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -301,7 +292,6 @@ CREATE TABLE `skip_play` (
 
 LOCK TABLES `skip_play` WRITE;
 /*!40000 ALTER TABLE `skip_play` DISABLE KEYS */;
-INSERT INTO `skip_play` VALUES (1,0,1438263883016,0,0.510274),(2,0.719245,1438263883529,0,175.138),(3,0,1438263899714,1,0.115551),(4,0.719245,1438263900532,1,175.857);
 /*!40000 ALTER TABLE `skip_play` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -320,7 +310,7 @@ CREATE TABLE `time_in_buffer` (
   `remaining_time_in_buffer` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -329,7 +319,6 @@ CREATE TABLE `time_in_buffer` (
 
 LOCK TABLES `time_in_buffer` WRITE;
 /*!40000 ALTER TABLE `time_in_buffer` DISABLE KEYS */;
-INSERT INTO `time_in_buffer` VALUES (1,176.043,1438263884025,0,2.17092),(2,177.041,1438263885030,0,1.17251),(3,178.04,1438263886032,0,0.174091),(4,176.484,1438263900722,1,1.7296),(5,177.343,1438263901723,1,0.87104);
 /*!40000 ALTER TABLE `time_in_buffer` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -348,7 +337,7 @@ CREATE TABLE `video_bytes_decoded_per_second` (
   `video_bytes` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -357,7 +346,6 @@ CREATE TABLE `video_bytes_decoded_per_second` (
 
 LOCK TABLES `video_bytes_decoded_per_second` WRITE;
 /*!40000 ALTER TABLE `video_bytes_decoded_per_second` DISABLE KEYS */;
-INSERT INTO `video_bytes_decoded_per_second` VALUES (1,176.043,1438263884025,0,758882),(2,177.041,1438263885030,0,68495),(3,178.04,1438263886032,0,239),(4,177.343,1438263901723,1,828291);
 /*!40000 ALTER TABLE `video_bytes_decoded_per_second` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -394,7 +382,6 @@ CREATE TABLE `video_information` (
 
 LOCK TABLES `video_information` WRITE;
 /*!40000 ALTER TABLE `video_information` DISABLE KEYS */;
-INSERT INTO `video_information` VALUES ('::ffff:127.0.0.1',1438263883015,'XEcW6glE3lxRdmrMqeMhucVJE5AVWpiG8AgG4Qjexbu9Mag7UtobSpTCceccyRHM','',3.14504,3.24903,0.104,1,178.214,0,178.214,0,'auto',0),('::ffff:127.0.0.1',1438263899713,'AdOlym5FUEODi5bTMQzVJThws5vg7746TB60FK7KItzO72rbR0UNIOMwLJ2dN8mv','',2.47206,2.83406,0.362,2,178.214,0,178.214,1,'auto',0.102);
 /*!40000 ALTER TABLE `video_information` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -411,7 +398,7 @@ CREATE TABLE `video_source` (
   `video_information_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -420,7 +407,6 @@ CREATE TABLE `video_source` (
 
 LOCK TABLES `video_source` WRITE;
 /*!40000 ALTER TABLE `video_source` DISABLE KEYS */;
-INSERT INTO `video_source` VALUES (1,'http://200.220.254.84/b.html',0),(2,'http://200.220.254.84/hobbit-720p.mp4',0),(3,'http://200.220.254.84/b.html',1),(4,'http://200.220.254.84/hobbit-720p.mp4',1);
 /*!40000 ALTER TABLE `video_source` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -439,7 +425,7 @@ CREATE TABLE `volume_state` (
   `volume` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -448,7 +434,6 @@ CREATE TABLE `volume_state` (
 
 LOCK TABLES `volume_state` WRITE;
 /*!40000 ALTER TABLE `volume_state` DISABLE KEYS */;
-INSERT INTO `volume_state` VALUES (1,176.043,1438263884026,0,1),(2,176.484,1438263900723,1,1);
 /*!40000 ALTER TABLE `volume_state` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -461,4 +446,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-07-30 10:52:34
+-- Dump completed on 2015-07-30 10:41:34

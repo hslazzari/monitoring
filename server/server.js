@@ -42,57 +42,11 @@ var xw = new XMLWriter;
 var sys = require('sys')
 var exec = require('child_process').exec;
 
-function puts(error, stdout, stderr) { sys.puts(stdout) }
-exec("ls -la", puts);
+//function puts(error, stdout, stderr) { sys.puts(stdout) }
+//exec("ls -la", puts);
     
-  
-
-/*
-var Schema = mongoose.Schema;  
-
-var UserQoE = new Schema({
-  ip: String,
-  timestamp : Number,
-  total_played_time: Number,
-  played_time_interval: [Schema.Types.Mixed],
-  total_played_time_with_stall: Number,
-  total_stall_length: Number,
-  total_number_of_stall: Number,
-  length_of_each_stall: [Number],
-  video_duration: Number,
-  playback_quality: [Schema.Types.Mixed],
-  frame_per_second: [Schema.Types.Mixed],
-  video_bytes_decoded_per_second: [Schema.Types.Mixed],
-  audio_bytes_decoded_per_second: [Schema.Types.Mixed],
-  dropped_frames: Number,
-  time_in_buffer: [Schema.Types.Mixed],
-  buffer_time: [Schema.Types.Mixed],
-  mute_state: [Schema.Types.Mixed],
-  volume_at_time: [Schema.Types.Mixed],
-  video_preload: String,
-  video_source: [String],
-  network_state_at_time: [Schema.Types.Mixed],
-  left_time : Number
-});
-*/
-//var UserQoEModel = mongoose.model('UserQoE', UserQoE);
-
-//mongoose.connect( 'mongodb://localhost/user_qoe' );
-
 app.get('/api/monitor', function (req, res){
   
-  /*
-
-    UserQoEModel.find({}, function (err, docs) {
-        res.json(docs);
-    });
-
-
-
-*/
-
-  
-
 
 });
 
@@ -101,7 +55,6 @@ function insert_into_video_information(req) {
   
   xw.startDocument('1.0', 'UTF-8', false);
   xw.startElement('report');
-  console.log(req.body.netmetric);
   xw.startElement("user").text("agentesslufrgs").endElement();
   xw.startElement("uuid").text("1a164c1b-9529-400b-b768-4fe50932669f").endElement();
   var timestamp_now = Date.now();
@@ -155,14 +108,11 @@ function insert_into_video_information(req) {
 
 
   video_information_id_ = video_information_id_+1;
-  console.log("INSERIR")
   var query = connection.query('INSERT INTO video_information SET ?', info, function(err, result) {
     if(err)
       console.log(err);
-    else
-      console.log(result);
   });
-  return {'video_id' : video_id, 'file_name' : timestamp_now.toString() + '-' + file_name};
+  return {'video_id' : video_id, 'file_name' : timestamp_now.toString() + '-' + file_name, 'info':info};
 }
 
 function insert_into_video_source_xml(req, video_id, index) {
@@ -693,33 +643,8 @@ function insert_into_buffer_interval(req, video_id) {
 
 
 app.post('/api/monitor', function (req, res){
-  console.log("Info received");
-  /*
-  userqoe = new UserQoEModel({
-    ip : req.ip,
-    timestamp : Date.now(),
-    total_played_time: req.body.total_played_time,
-    played_time_interval: req.body.played_time_interval,
-    total_played_time_with_stall: req.body.total_played_time_with_stall,
-    total_stall_length: req.body.total_stall_length,
-    total_number_of_stall: req.body.total_number_of_stall,
-    length_of_each_stall: req.body.length_of_each_stall,
-    video_duration: req.body.video_duration,
-    playback_quality: req.body.playback_quality,
-    frame_per_second: req.body.frame_per_second,
-    video_bytes_decoded_per_second: req.body.video_bytes_decoded_per_second,
-    audio_bytes_decoded_per_second: req.body.audio_bytes_decoded_per_second,
-    dropped_frames: req.body.dropped_frames,
-    time_in_buffer: req.body.time_in_buffer,
-    buffer_time: req.body.buffer_time,
-    mute_state: req.body.mute_state,
-    volume_at_time: req.body.volume_at_time,
-    video_preload: req.body.video_preload,
-    video_source: req.body.video_source,
-    network_state_at_time: req.body.network_state_at_time,
-    left_time : req.body.left_time
-  });
-*/
+  console.log("Monitoring info received");
+  
 
   var results = insert_into_video_information(req);
   var video_id = results.video_id;
@@ -738,28 +663,20 @@ app.post('/api/monitor', function (req, res){
   insert_into_frame_per_second(req, video_id);
   insert_into_buffer_interval(req, video_id);
   xw.endDocument();
-  // https://www.npmjs.com/package/xml-writer#startdocument-string-version-1-0-string-encoding-null-boolean-standalone-false
+  
   fs.writeFile('./results/' + results.file_name + '.xml', xw.toString(), function (err) {
     if (err) throw err;
-    console.log('It\'s saved!');
-    //function puts(error, stdout, stderr) { sys.puts(stdout) }
-    //exec("ls -la", puts);
-
-
   });
-  //console.log(xw.toString());
   
+  var return_object = {};
+  return_object["timestamp"] = results.info.start_timestamp;
+  return_object["hash"] = results.info.hash;
+  return_object["ip"] = results.info.ip;
 
-  /*
+  console.log("Monitoring info saved");
 
-    userqoe.save(function (err) {
-    if (!err) {
-      return console.log("created");
-    } else {
-      return console.log(err);
-    }
-  });
-*/
+  res.json(JSON.stringify(return_object));
+
 
 });
 
@@ -772,46 +689,49 @@ app.post('/api/monitor', function (req, res){
 
 
 app.post('/api/questionario', function (req, res){
-  console.log("Info received");
-
-  return_object = {};
-
-  return_object["idade"] = 10;
-
-  res.json(JSON.stringify(return_object));
-
- 
-  
-  /*
-  var results = insert_into_video_information(req);
-  var video_id = results.video_id;
-
-  insert_into_video_source(req, video_id);
-  insert_into_volume_state(req, video_id);
-  insert_into_video_bytes_decoded_per_second(req, video_id);
-  insert_into_audio_bytes_decoded_per_second(req, video_id);
-  insert_into_time_in_buffer(req, video_id);
-  insert_into_skip_play(req, video_id);
-  insert_into_played_interval(req, video_id);
-  insert_into_playback_quality(req, video_id);
-  insert_into_network_state(req, video_id);
-  insert_into_mute_state(req, video_id);
-  insert_into_length_of_stall(req, video_id);
-  insert_into_frame_per_second(req, video_id);
-  insert_into_buffer_interval(req, video_id);
-  xw.endDocument();
- 
-  fs.writeFile('./results/' + results.file_name + '.xml', xw.toString(), function (err) {
-    if (err) throw err;
-    console.log('It\'s saved!');
- 
-  });
-
-*/
- 
-
+  console.log("received questionario");
+  insert_into_questionario(req);
 });
 
+
+
+
+function insert_into_questionario(req) {
+ 
+  var info  = { 
+    ip: req.body.ip, 
+    timestamp: req.body.timestamp,
+    hash: req.body.hash,
+    opinion : req.body.opinion,
+    rating : req.body.rating,
+    conteudo : req.body.conteudo,
+    diario : req.body.diario,
+    idade : req.body.idade,
+    sexo : req.body.sexo,
+    pais : req.body.pais,
+    comentario : req.body.comment,
+    tempo : req.body.tempo
+  };
+
+  if(info.hash == "") {
+    info.hash = randomString(64, "aA#");
+  }
+
+  if(info.ip == "") {
+    info.ip = req.ip;
+  }
+
+  if(info.timestamp == "") {
+    info.timestamp = Date.now();
+  }
+
+  var query = connection.query('INSERT INTO questionario SET ?', info, function(err, result) {
+  if(err)
+    console.log(err);
+  });
+
+  console.log("Saved questionario!");
+}
 
 
 
@@ -836,6 +756,6 @@ var server = app.listen(3000, function () {
   var host = server.address().address
   var port = server.address().port
 
-  console.log('Example app listening at http://%s:%s', host, port)
+  console.log('Monitoring server listening at http://%s:%s', host, port)
 
 });
