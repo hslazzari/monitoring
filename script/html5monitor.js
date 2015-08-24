@@ -357,7 +357,12 @@ function start_monitor(configuration) {
 
 		//Start all monitoring process
 
-		monitor.start_all_monitoring(time_interval, configuration.intervalo_minimo_de_stall);
+		//monitor.start_all_monitoring(time_interval, configuration.intervalo_minimo_de_stall);
+		var simulador = new Simulador(video_element);
+		simulador.simulate_startup_time();
+		setTimeout(function() { 
+			simulador.change_source("hobbit-1080p.mp4");
+		}, 15000);
 			
 		
 

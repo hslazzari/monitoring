@@ -24,7 +24,7 @@ function normalize(c) {
   if(c.enviar_para_servidor == "false")
     c.enviar_para_servidor = false;
 
-  
+ 
 
 }
 
@@ -121,5 +121,41 @@ function refresh_page() {
 $('input[name="monitorar"]').change(function() {
     refresh_page();
 });
+
+document.getElementById('simulador').addEventListener('click',
+    simulador);
+
+
+function simulador() {
+      if($("#simulador").text() == "Ativar simulador") {
+        $("#simulador").text("Desativar simulador");
+        $("#simulador").addClass("btn-danger");
+        $("#simulador").removeClass("btn-primary");
+        $("#monitor").hide();  
+        
+
+        console.log("OI");
+        
+var sampleJson1 = {
+    ToolTipPosition: "bottom",
+    data: [{ order: 1, Text: "Foo", ToolTipText: "Step1-Foo", highlighted: true },
+        { order: 2, Text: "Bar", ToolTipText: "Step2-Bar", highlighted: true },
+        { order: 3, Text: "Baz", ToolTipText: "Step3-Baz", highlighted: false },
+        { order: 4, Text: "Quux", ToolTipText: "Step4-Quux", highlighted: false }]
+};
+
+        $("#tracker1").progressTracker(sampleJson1);
+      
+
+      
+
+      } else {
+        $("#simulador").text("Ativar simulador");
+        $("#simulador").removeClass("btn-danger");
+        $("#simulador").addClass("btn-primary");
+        $("#monitor").show();  
+      }
+      
+}
 
 
