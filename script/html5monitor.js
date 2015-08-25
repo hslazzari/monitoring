@@ -25,6 +25,9 @@ function normalize(c) {
     if(c.enviar_para_servidor == "false")
     	c.enviar_para_servidor = false;
 
+     c.startup_time = Number(c.startup_time);
+     c.stall_duration = Number(c.stall_duration);
+
     console.log(c);
 
 }
@@ -280,11 +283,15 @@ $(document).ready(function() {
 
 			
 			
-			if(config.monitorar == true) {
+			if(config.monitorar == true && config.simulador == "Ativar simulador") {
 				start_monitor(config);
 			}
 			else {
 				console.log("Não monitorar");
+			}
+
+			if(config.simulador == "Desativar simulador") {
+				start_simulator(config);
 			}
 		}
 		else {
@@ -330,12 +337,17 @@ function start_simulator(configuration) {
 		var video_element = document.getElementsByTagName('video')[0];
 		
 		var simulador = new Simulador(video_element);
-		simulador.simulate_startup_time();
+		console.log(video_element);
+		console.log("INit");
+		//simulador.simulate_startup_time();
 		
-		setTimeout(function() { 
+		/*setTimeout(function() { 
 			simulador.change_source("hobbit-1080p.mp4");
 		}, 15000);
-			
+		*/
+		simulador.add_stall_duration(config.stall_duration);
+		simulador.add_stalls_at_point(config.estado_stall);
+		simulador.start_stall_creator();
 		
 
 		document.getElementsByTagName('video')[0].addEventListener("ended", function() {
@@ -429,13 +441,8 @@ function start_monitor(configuration) {
 
 		//Start all monitoring process
 
-		//monitor.start_all_monitoring(time_interval, configuration.intervalo_minimo_de_stall);
-		var simulador = new Simulador(video_element);
-		simulador.simulate_startup_time();
-		setTimeout(function() { 
-			simulador.change_source("hobbit-1080p.mp4");
-		}, 15000);
-			
+		monitor.start_all_monitoring(time_interval, configuration.intervalo_minimo_de_stall);
+		
 		
 
 		document.getElementsByTagName('video')[0].addEventListener("ended", function() {

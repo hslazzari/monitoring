@@ -17,7 +17,11 @@ chrome.storage.sync.get({
     relatorio: false,
     intervalo_minimo_de_stall : 50,
     intervalo_de_monitoramento : 1000,
-    enviar_para_servidor : true
+    enviar_para_servidor : true,
+    estado_stall : {"pos0":"undefined"},
+    startup_time : 1000,
+    stall_duration : 1000,
+    simulador : "Ativar simulador"
 }, function(items) {
         config = items;
 });
@@ -57,7 +61,8 @@ function normalize(c) {
     if(c.enviar_para_servidor == "false")
         c.enviar_para_servidor = false;
 
-
+    c.startup_time = Number(c.startup_time);
+    c.stall_duration = Number(c.stall_duration);
 }
 
 

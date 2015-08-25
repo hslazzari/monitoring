@@ -24,7 +24,8 @@ function normalize(c) {
   if(c.enviar_para_servidor == "false")
     c.enviar_para_servidor = false;
 
- 
+ c.startup_time = Number(c.startup_time);
+ c.stall_duration = Number(c.stall_duration);
 
 }
 
@@ -35,6 +36,16 @@ function normalize(c) {
 // Saves options to chrome.storage
 function save_options() {
   var ende = document.getElementById('endereco').value;
+  
+  var stall_state = {};
+  $(".custom").each(function() {
+          var btn = $(this);
+          var name = btn.attr("id");
+          var estado = btn.attr("estado");
+          stall_state[name] = estado;
+  });
+
+
   chrome.storage.sync.set({
     endereco: ende,
     monitorar: $('input[name="monitorar"]:checked').val(),
@@ -42,7 +53,11 @@ function save_options() {
     relatorio: $('input[name="relatorio"]:checked').val(),
     intervalo_minimo_de_stall: $("#intervalo_minimo_de_stall").val(),
     intervalo_de_monitoramento : $("#intervalo_de_monitoramento").val(),
-    enviar_para_servidor : $("#enviar_para_servidor").prop('checked')
+    enviar_para_servidor : $("#enviar_para_servidor").prop('checked'),
+    simulador : $("#simulador").text(),
+    estado_stall : stall_state ,
+    startup_time : $("#startup_time").val(),
+    stall_duration : $("#stall_duration").val()
 
   }, function() {
     // Update status to let user know options were saved.
@@ -69,7 +84,11 @@ function restore_options() {
     relatorio: "false",
     intervalo_minimo_de_stall : 50,
     intervalo_de_monitoramento : 1000,
-    enviar_para_servidor : "true"
+    enviar_para_servidor : "true",
+    simulador : $("#simulador").text(),
+    estado_stall : {"pos0":"undefined"},
+    startup_time : 1000,
+    stall_duration : 1000
 
   }, function(items) {
 
@@ -100,7 +119,25 @@ function restore_options() {
 
     $("#enviar_para_servidor").prop('checked', items.enviar_para_servidor);
 
+    $("#simulador").text(items.simulador);
+    console.log(items.estado_stall);
+    if(items.estado_stall["pos0"] != undefined) {
+       $(".custom").each(function() {
+          var btn = $(this);
+          var name = btn.attr("id");
+          btn.attr("estado", items.estado_stall[name]);
+       });
+    }
+
+
+    $("#startup_time").val(items.startup_time);
+
+    $("#stall_duration").val(items.stall_duration);
+
     refresh_page();
+
+    
+
 
   });
 }
@@ -115,6 +152,32 @@ function refresh_page() {
       } else {
           $("#monitorando").css('visibility','hidden');
       }
+
+       console.log($("#simulador").text());
+       if($("#simulador").text() == "Ativar simulador") {
+        $("#simulador").removeClass("btn-danger");
+        $("#simulador").addClass("btn-primary");
+        $("#monitor").show();  
+        $("#simulacao").hide();
+      } else {
+        $("#simulador").addClass("btn-danger");
+        $("#simulador").removeClass("btn-primary");
+        $("#monitor").hide();  
+        $("#simulacao").show();
+      }
+
+
+      $(".custom").each(function() {
+          var btn = $(this);
+          if(btn.attr("estado") == "good") {
+              btn.removeClass("btn-danger");
+              btn.addClass("btn-success");
+          } else {
+              btn.removeClass("btn-success");
+              btn.addClass("btn-danger");
+          }
+      });
+      
 };
 
 
@@ -133,29 +196,32 @@ function simulador() {
         $("#simulador").removeClass("btn-primary");
         $("#monitor").hide();  
         $("#simulacao").show();
-
-        $("#pos0").click(
-          function(){
-            if($("#pos0").attr("estado") == "good") {
-              $("#pos0").removeClass("btn-success");
-              $("#pos0").addClass("btn-danger");
-              $("#pos0").attr("estado") = "bad";
-            } else {
-              $("#pos0").removeClass("btn-danger");
-              $("#pos0").addClass("btn-success");
-              $("#pos0").attr("estado") = "good";
-            }
-        })
-
-
+        $("#simulacao").attr("estado","ativo");
+      
       } else {
         $("#simulador").text("Ativar simulador");
         $("#simulador").removeClass("btn-danger");
         $("#simulador").addClass("btn-primary");
         $("#monitor").show();  
         $("#simulacao").hide();
+        $("#simulacao").attr("estado","inativo");
       }
       
 }
 
 
+$(".custom").each(function() {
+          var btn = $(this);
+
+          $(this).click(function() {
+              if(btn.attr("estado") == "good") {
+                btn.removeClass("btn-success");
+                btn.addClass("btn-danger");
+                btn.attr("estado", "bad");
+              } else {
+                btn.removeClass("btn-danger");
+                btn.addClass("btn-success");
+                btn.attr("estado", "good");
+              }
+          })
+});
