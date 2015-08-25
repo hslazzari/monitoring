@@ -21,7 +21,10 @@ chrome.storage.sync.get({
     estado_stall : {"pos0":"undefined"},
     startup_time : 1000,
     stall_duration : 1000,
-    simulador : "Ativar simulador"
+    simulador : "Ativar simulador",
+    ativar_startup_stall : true,
+    ativar_stall : true
+
 }, function(items) {
         config = items;
 });
@@ -60,6 +63,20 @@ function normalize(c) {
         c.enviar_para_servidor = true;
     if(c.enviar_para_servidor == "false")
         c.enviar_para_servidor = false;
+
+
+  if(c.ativar_startup_stall == "true")
+    c.ativar_startup_stall = true;
+  if(c.ativar_startup_stall == "false")
+    c.ativar_startup_stall = false;
+
+  if(c.ativar_stall == "true")
+    c.ativar_stall = true;
+  if(c.ativar_stall == "false")
+    c.ativar_stall = false;
+
+
+
 
     c.startup_time = Number(c.startup_time);
     c.stall_duration = Number(c.stall_duration);

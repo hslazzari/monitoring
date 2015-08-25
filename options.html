@@ -119,6 +119,12 @@
     <div class="form-group">
       <label>Tempo de startup (milissegundos)</label>
       <input type="number" class="form-control" min="50" max="100000" id="startup_time" placeholder="1000" value="1000">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" id="ativar_startup_stall" checked> Ativar startup
+        </label>
+      </div>
+  
     </div>
 
 
@@ -133,11 +139,17 @@
     <div class="form-group">
       <label>Duração do stall (milissegundos):</label>
       <input type="text" class="form-control" id="stall_duration" placeholder="1000" value="1000">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" id="ativar_stall" checked> Ativar stall
+        </label>
+      </div>
+  
     </div>
 
 
     <div class="form-group">
-      <label>Posição em porcentagem [0-10]: </label>
+      <label>Posição em porcentagem [0-10] do stall: </label>
       <button type="button" id="pos0" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos1" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos2" estado="good" class="btn btn-success custom"></button>
@@ -151,7 +163,7 @@
     </div>
 
     <div class="form-group">
-      <label>Posição em porcentagem [11-20]: </label>
+      <label>Posição em porcentagem [11-20] do stall: </label>
       <button type="button" id="pos11" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos12" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos13" estado="good" class="btn btn-success custom"></button>
@@ -165,7 +177,7 @@
     </div>
 
     <div class="form-group">
-      <label>Posição em porcentagem [21-30]: </label>
+      <label>Posição em porcentagem [21-30] do stall: </label>
       <button type="button" id="pos21" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos22" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos23" estado="good" class="btn btn-success custom"></button>
@@ -179,7 +191,7 @@
     </div>
 
     <div class="form-group">
-      <label>Posição em porcentagem [31-40]: </label>
+      <label>Posição em porcentagem [31-40] do stall: </label>
       <button type="button" id="pos31" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos32" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos33" estado="good" class="btn btn-success custom"></button>
@@ -193,7 +205,7 @@
     </div>
     
     <div class="form-group">
-      <label>Posição em porcentagem [41-50]: </label>
+      <label>Posição em porcentagem [41-50] do stall: </label>
       <button type="button" id="pos41" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos42" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos43" estado="good" class="btn btn-success custom"></button>
@@ -207,7 +219,7 @@
     </div>
 
     <div class="form-group">
-      <label>Posição em porcentagem [51-60]: </label>
+      <label>Posição em porcentagem [51-60] do stall: </label>
       <button type="button" id="pos51" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos52" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos53" estado="good" class="btn btn-success custom"></button>
@@ -221,7 +233,7 @@
     </div>
     
     <div class="form-group">
-      <label>Posição em porcentagem [61-70]: </label>
+      <label>Posição em porcentagem [61-70] do stall: </label>
       <button type="button" id="pos61" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos62" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos63" estado="good" class="btn btn-success custom"></button>
@@ -235,7 +247,7 @@
     </div>
 
     <div class="form-group">
-      <label>Posição em porcentagem [71-80]: </label>
+      <label>Posição em porcentagem [71-80] do stall: </label>
       <button type="button" id="pos71" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos72" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos73" estado="good" class="btn btn-success custom"></button>
@@ -249,7 +261,7 @@
     </div>
     
     <div class="form-group">
-      <label>Posição em porcentagem [81-90]: </label>
+      <label>Posição em porcentagem [81-90] do stall: </label>
       <button type="button" id="pos81" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos82" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos83" estado="good" class="btn btn-success custom"></button>
@@ -263,7 +275,7 @@
     </div>
 
     <div class="form-group">
-      <label>Posição em porcentagem [91-100]: </label>
+      <label>Posição em porcentagem [91-100] do stall: </label>
       <button type="button" id="pos91" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos92" estado="good" class="btn btn-success custom"></button>
       <button type="button" id="pos93" estado="good" class="btn btn-success custom"></button>

@@ -19,6 +19,20 @@ function normalize(c) {
   c.intervalo_de_monitoramento = Number(c.intervalo_de_monitoramento);
 
 
+  if(c.ativar_startup_stall == "true")
+    c.ativar_startup_stall = true;
+  if(c.ativar_startup_stall == "false")
+    c.ativar_startup_stall = false;
+
+  if(c.ativar_stall == "true")
+    c.ativar_stall = true;
+  if(c.ativar_stall == "false")
+    c.ativar_stall = false;
+
+
+
+    
+
   if(c.enviar_para_servidor == "true")
     c.enviar_para_servidor = true;
   if(c.enviar_para_servidor == "false")
@@ -57,7 +71,9 @@ function save_options() {
     simulador : $("#simulador").text(),
     estado_stall : stall_state ,
     startup_time : $("#startup_time").val(),
-    stall_duration : $("#stall_duration").val()
+    stall_duration : $("#stall_duration").val(),
+    ativar_startup_stall : $("#ativar_startup_stall").prop('checked'),
+    ativar_stall : $("#ativar_stall").prop('checked')
 
   }, function() {
     // Update status to let user know options were saved.
@@ -88,7 +104,9 @@ function restore_options() {
     simulador : $("#simulador").text(),
     estado_stall : {"pos0":"undefined"},
     startup_time : 1000,
-    stall_duration : 1000
+    stall_duration : 1000,
+    ativar_startup_stall : "true",
+    ativar_stall : "true"
 
   }, function(items) {
 
@@ -118,6 +136,11 @@ function restore_options() {
     $("#intervalo_minimo_de_stall").val(items.intervalo_minimo_de_stall);
 
     $("#enviar_para_servidor").prop('checked', items.enviar_para_servidor);
+
+    $("#ativar_startup_stall").prop('checked', items.ativar_startup_stall);
+    
+    $("#ativar_stall").prop('checked', items.ativar_stall);
+    
 
     $("#simulador").text(items.simulador);
     console.log(items.estado_stall);
