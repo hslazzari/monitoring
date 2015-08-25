@@ -132,28 +132,28 @@ function simulador() {
         $("#simulador").addClass("btn-danger");
         $("#simulador").removeClass("btn-primary");
         $("#monitor").hide();  
-        
+        $("#simulacao").show();
 
-        console.log("OI");
-        
-var sampleJson1 = {
-    ToolTipPosition: "bottom",
-    data: [{ order: 1, Text: "Foo", ToolTipText: "Step1-Foo", highlighted: true },
-        { order: 2, Text: "Bar", ToolTipText: "Step2-Bar", highlighted: true },
-        { order: 3, Text: "Baz", ToolTipText: "Step3-Baz", highlighted: false },
-        { order: 4, Text: "Quux", ToolTipText: "Step4-Quux", highlighted: false }]
-};
+        $("#pos0").click(
+          function(){
+            if($("#pos0").attr("estado") == "good") {
+              $("#pos0").removeClass("btn-success");
+              $("#pos0").addClass("btn-danger");
+              $("#pos0").attr("estado") = "bad";
+            } else {
+              $("#pos0").removeClass("btn-danger");
+              $("#pos0").addClass("btn-success");
+              $("#pos0").attr("estado") = "good";
+            }
+        })
 
-        $("#tracker1").progressTracker(sampleJson1);
-      
-
-      
 
       } else {
         $("#simulador").text("Ativar simulador");
         $("#simulador").removeClass("btn-danger");
         $("#simulador").addClass("btn-primary");
         $("#monitor").show();  
+        $("#simulacao").hide();
       }
       
 }

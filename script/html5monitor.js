@@ -317,6 +317,78 @@ function GetURLParameter(sParam) {
     }
 }
 
+function start_simulator(configuration) {
+	var send_to_server = configuration.enviar_para_servidor;
+	var has_already_sent_to_server = false;
+
+
+	
+
+	if(document.getElementsByTagName('video')[0] != null) {
+
+		var url = document.URL;
+		var video_element = document.getElementsByTagName('video')[0];
+		
+		var simulador = new Simulador(video_element);
+		simulador.simulate_startup_time();
+		
+		setTimeout(function() { 
+			simulador.change_source("hobbit-1080p.mp4");
+		}, 15000);
+			
+		
+
+		document.getElementsByTagName('video')[0].addEventListener("ended", function() {
+			
+			BootstrapDialog.show( {
+		   		title: "Qualidade de experiência",
+			   	message: $('<div></div>').load(chrome.extension.getURL("remote.html")),
+			   	closable: true,
+			    closeByBackdrop: false,
+			    closeByKeyboard: false,
+			    buttons: [{
+			       	label: 'Boa',
+			        cssClass: 'btn-primary',
+			        action: function(dialogItself) {
+				              	if(configuration.relatorio) {
+									local_save_questionario(monitor.json().start_timestamp, "Boa");
+								}
+								if(configuration.enviar_para_servidor) {
+									send_questionario(configuration.endereco, "Boa");
+								}
+								dialogItself.close();
+		               		}
+			       	}, {
+			            label: 'Ruim',
+			            cssClass: 'btn-danger',
+			            action: function(dialogItself) {
+									if(configuration.relatorio) {
+										local_save_questionario(monitor.json().start_timestamp, "Ruim");
+									}
+									if(configuration.enviar_para_servidor) {
+										send_questionario(configuration.endereco, "Ruim");
+									}
+									dialogItself.close();
+			               		}
+			        }, {
+			            label: 'Cancelar',
+			            action: function(dialogItself) {
+					                dialogItself.close();
+			                	}
+			        }]
+			    });
+				
+
+
+			
+	    		
+			
+
+		});
+
+	}
+}
+
 function start_monitor(configuration) {
 
 	var send_to_server = configuration.enviar_para_servidor;
