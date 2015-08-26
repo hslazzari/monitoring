@@ -23,7 +23,9 @@ chrome.storage.sync.get({
     stall_duration : 1000,
     simulador : "Ativar simulador",
     ativar_startup_stall : true,
-    ativar_stall : true
+    ativar_stall : true,
+    show_video_controls : true,
+    show_questionario_simulador : true
 
 }, function(items) {
         config = items;
@@ -74,6 +76,18 @@ function normalize(c) {
     c.ativar_stall = true;
   if(c.ativar_stall == "false")
     c.ativar_stall = false;
+
+
+if(c.show_video_controls == "true")
+    c.show_video_controls = true;
+  if(c.show_video_controls == "false")
+    c.show_video_controls = false;
+
+  
+ if(c.show_questionario_simulador == "true")
+    c.show_questionario_simulador = true;
+  if(c.show_questionario_simulador == "false")
+    c.show_questionario_simulador = false;
 
 
 

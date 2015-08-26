@@ -47,6 +47,7 @@
 
   "web_accessible_resources" : [
     "remote.html",
+    "calculator.html",
     "star-on.png",
     "star-off.png"
   ],

@@ -11,6 +11,7 @@ function Simulador(video_element) {
 	this.stall_points_ = {};
 
 	this.timer_for_stall_simulator_;
+	this.has_finished_playing_ = false;
 
 }
 
@@ -69,11 +70,16 @@ Simulador.prototype.add_stalls_at_point = function(percent_points) {
 }
 
 Simulador.prototype.has_ended = function() {
-	return false;
+	return this.has_finished_playing_;
 }
 
 Simulador.prototype.stop_stall_creator = function() {
 	clearInterval(this.timer_for_stall_simulator_);
+}
+
+Simulador.prototype.stop_all_simulation = function() {
+	this.has_finished_playing_ = true;
+	this.stop_stall_creator();
 }
 
 Simulador.prototype.start_stall_creator = function() {
@@ -101,7 +107,8 @@ Simulador.prototype.start_stall_creator = function() {
 					delete self.stall_points_[pos];
 					self.video_element_.pause();
 					setTimeout(function() { 
-						self.video_element_.play();
+						if(self.has_ended() == false)
+							self.video_element_.play();
 					}, self.stall_duration_);
 
 

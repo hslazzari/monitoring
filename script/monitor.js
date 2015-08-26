@@ -35,6 +35,7 @@ function Monitor(video_element, url) {
 	this.loading_time_ = false;
 	this.start_buffering_time_ = 0;
 	this.stall_detected_ = false;
+	this.minimum_stall_lenght_;
 
 	//Control Variable to Playback Quality Monitor
 
@@ -162,15 +163,18 @@ Monitor.prototype.total_stall_length = function() {
 
 
 Monitor.prototype.increment_number_of_stall = function(stall_length) {
-	this.total_stall_length_ = this.total_stall_length_ + stall_length;
+	if(stall_length > this.minimum_stall_lenght_) {
+		this.total_stall_length_ = this.total_stall_length_ + stall_length;
+		this.stall_length_.push({
+									current_video_position : this.current_video_position_,
+									timestamp_of_stall : this.timestamp_of_stall_,
+									duration_of_stall : stall_length
 
-	this.stall_length_.push({
-								current_video_position : this.current_video_position_,
-								timestamp_of_stall : this.timestamp_of_stall_,
-								duration_of_stall : stall_length
+								});
+		this.stall_ = this.stall_ + 1;	
+	}
 
-							});
-	this.stall_ = this.stall_ + 1;
+	
 }
 
 Monitor.prototype.total_number_of_stall = function() {
@@ -203,7 +207,10 @@ Monitor.prototype.stop_stall_monitor = function() {
 Monitor.prototype.start_stall_monitor = function(check_interval_in_miliseconds) {
 	//this.stop_stall_monitor();
 	var self = this;
+	self.minimum_stall_lenght_ = check_interval_in_miliseconds/1000.0;
+
 	this.timer_for_stall_counter_= setInterval(function() {
+
 
 		current_play_position = self.video_element_.currentTime;
 		var offset = 1 / check_interval_in_miliseconds;
@@ -245,7 +252,7 @@ Monitor.prototype.start_stall_monitor = function(check_interval_in_miliseconds) 
 		
 
 
-	}, check_interval_in_miliseconds);
+	}, 50);
 }
 
 Monitor.prototype.stop_playback_quality_monitor = function() {

@@ -40,6 +40,18 @@ function normalize(c) {
   if(c.ativar_stall == "false")
     c.ativar_stall = false;
 
+  if(c.show_video_controls == "true")
+    c.show_video_controls = true;
+  if(c.show_video_controls == "false")
+    c.show_video_controls = false;
+
+  
+ if(c.show_questionario_simulador == "true")
+    c.show_questionario_simulador = true;
+  if(c.show_questionario_simulador == "false")
+    c.show_questionario_simulador = false;
+
+
 
 
 
@@ -353,7 +365,10 @@ function start_simulator(configuration) {
 		var video_element = document.getElementsByTagName('video')[0];
 		
 		var simulador = new Simulador(video_element);
-		video_element.controls = false;
+		if(config.show_video_controls)
+		 	video_element.controls = true;
+		else
+			video_element.controls = false;
 		video_element.play();
 		console.log(video_element);
 		console.log("Init simulador");
@@ -372,54 +387,43 @@ function start_simulator(configuration) {
 			simulador.start_stall_creator();
 		}
 		
-
-		document.getElementsByTagName('video')[0].addEventListener("ended", function() {
-			
-			BootstrapDialog.show( {
-		   		title: "Qualidade de experiência",
-			   	message: $('<div></div>').load(chrome.extension.getURL("remote.html")),
-			   	closable: true,
-			    closeByBackdrop: false,
-			    closeByKeyboard: false,
-			    buttons: [{
-			       	label: 'Boa',
-			        cssClass: 'btn-primary',
-			        action: function(dialogItself) {
-				              	if(configuration.relatorio) {
-									local_save_questionario(monitor.json().start_timestamp, "Boa");
-								}
-								if(configuration.enviar_para_servidor) {
-									send_questionario(configuration.endereco, "Boa");
-								}
-								dialogItself.close();
-		               		}
-			       	}, {
-			            label: 'Ruim',
-			            cssClass: 'btn-danger',
-			            action: function(dialogItself) {
-									if(configuration.relatorio) {
-										local_save_questionario(monitor.json().start_timestamp, "Ruim");
-									}
-									if(configuration.enviar_para_servidor) {
-										send_questionario(configuration.endereco, "Ruim");
-									}
+		
+			document.getElementsByTagName('video')[0].addEventListener("ended", function() {
+				if(config.show_questionario_simulador) {
+					simulador.stop_all_simulation();
+					BootstrapDialog.show( {
+			   			title: "Qualidade de experiência - Simulada",
+				   		message: $('<div></div>').load(chrome.extension.getURL("remote.html")),
+				   		closable: true,
+				    	closeByBackdrop: false,
+				    	closeByKeyboard: false,
+				   	 buttons: [{
+				       	label: 'Boa',
+				        cssClass: 'btn-primary',
+				        action: function(dialogItself) {
+					              	//send_questionario(configuration.endereco, "Boa");
 									dialogItself.close();
 			               		}
-			        }, {
-			            label: 'Cancelar',
-			            action: function(dialogItself) {
-					                dialogItself.close();
-			                	}
-			        }]
-			    });
-				
+				       	}, {
+				            label: 'Ruim',
+				            cssClass: 'btn-danger',
+				            action: function(dialogItself) {
+									//send_questionario(configuration.endereco, "Ruim");
+									dialogItself.close();
+				               	}
+				        }, {
+				            label: 'Cancelar',
+				            action: function(dialogItself) {
+						                dialogItself.close();
+				                	}
+				        }]
+				    });
+				}
+			});
+		
+		
 
-
-			
-	    		
-			
-
-		});
+		
 
 	}
 }

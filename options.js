@@ -38,6 +38,20 @@ function normalize(c) {
   if(c.enviar_para_servidor == "false")
     c.enviar_para_servidor = false;
 
+ if(c.show_video_controls == "true")
+    c.show_video_controls = true;
+  if(c.show_video_controls == "false")
+    c.show_video_controls = false;
+
+ if(c.show_questionario_simulador == "true")
+    c.show_questionario_simulador = true;
+  if(c.show_questionario_simulador == "false")
+    c.show_questionario_simulador = false;
+
+
+
+  
+
  c.startup_time = Number(c.startup_time);
  c.stall_duration = Number(c.stall_duration);
 
@@ -73,7 +87,9 @@ function save_options() {
     startup_time : $("#startup_time").val(),
     stall_duration : $("#stall_duration").val(),
     ativar_startup_stall : $("#ativar_startup_stall").prop('checked'),
-    ativar_stall : $("#ativar_stall").prop('checked')
+    ativar_stall : $("#ativar_stall").prop('checked'),
+    show_video_controls : $("#show_video_controls").prop('checked'),
+    show_questionario_simulador : $("#show_questionario_simulador").prop('checked')
 
   }, function() {
     // Update status to let user know options were saved.
@@ -106,7 +122,9 @@ function restore_options() {
     startup_time : 1000,
     stall_duration : 1000,
     ativar_startup_stall : "true",
-    ativar_stall : "true"
+    ativar_stall : "true",
+    show_video_controls : "true",
+    show_questionario_simulador : "true"
 
   }, function(items) {
 
@@ -140,6 +158,10 @@ function restore_options() {
     $("#ativar_startup_stall").prop('checked', items.ativar_startup_stall);
     
     $("#ativar_stall").prop('checked', items.ativar_stall);
+
+    $("#show_video_controls").prop('checked', items.show_video_controls);
+
+    $("#show_questionario_simulador").prop('checked', items.show_questionario_simulador);
     
 
     $("#simulador").text(items.simulador);
@@ -182,11 +204,13 @@ function refresh_page() {
         $("#simulador").addClass("btn-primary");
         $("#monitor").show();  
         $("#simulacao").hide();
+        $("#titulo_config").text("Configurações");
       } else {
         $("#simulador").addClass("btn-danger");
         $("#simulador").removeClass("btn-primary");
         $("#monitor").hide();  
         $("#simulacao").show();
+        $("#titulo_config").text("Configurações - Simulador");
       }
 
 
@@ -200,6 +224,10 @@ function refresh_page() {
               btn.addClass("btn-danger");
           }
       });
+
+
+      $("#endereco_disabled").val($("#endereco").val());
+      $("#enviar_para_servidor_disabled").prop('checked', $("#enviar_para_servidor").prop('checked'));
       
 };
 
@@ -220,7 +248,9 @@ function simulador() {
         $("#monitor").hide();  
         $("#simulacao").show();
         $("#simulacao").attr("estado","ativo");
-      
+        $("#titulo_config").text("Configurações - Simulador");
+        $("#endereco_disabled").val($("#endereco").val());
+        $("#enviar_para_servidor_disabled").prop('checked', $("#enviar_para_servidor").prop('checked'));
       } else {
         $("#simulador").text("Ativar simulador");
         $("#simulador").removeClass("btn-danger");
@@ -228,6 +258,9 @@ function simulador() {
         $("#monitor").show();  
         $("#simulacao").hide();
         $("#simulacao").attr("estado","inativo");
+        $("#titulo_config").text("Configurações");
+        $("#endereco_disabled").val($("#endereco").val());
+        $("#enviar_para_servidor_disabled").prop('checked', $("#enviar_para_servidor").prop('checked'));
       }
       
 }
@@ -245,6 +278,75 @@ $(".custom").each(function() {
                 btn.removeClass("btn-danger");
                 btn.addClass("btn-success");
                 btn.attr("estado", "good");
+              }
+          })
+});
+
+
+$("#calculator").click(function() {
+      BootstrapDialog.show( {
+          title: "Calculadora para porcentagem",
+          message: $('<div></div>').load(chrome.extension.getURL("calculator.html")),
+          closable: true,
+          closeByBackdrop: false,
+          closeByKeyboard: false,
+          buttons: [{
+              label: 'Calcular',
+              cssClass: 'btn-primary',
+              action: function(dialogItself) {
+                var result = Number($("#posicao").val().replace(",", ".")) * 100.0;
+                result = result / Number($("#duracao").val().replace(",", "."))
+
+                $("#resultado_exato").text("Resultado exato: " + result);
+                $("#resultado_aproximado").text("Resultado aproximado: " + Math.round(result));
+              }}, {
+                  label: 'Cancelar',
+                  action: function(dialogItself) {
+                          dialogItself.close();
+                        }
+              }]
+          });
+});
+
+
+$("#proxPagina").click(function() {
+  $("#pagina_1").hide();
+  $("#pagina_2").show();
+});
+$("#prevPagina").click(function() {
+  $("#pagina_1").show();
+  $("#pagina_2").hide();
+});
+
+
+$(".custom2").each(function() {
+          var btn = $(this);
+
+          $(this).click(function() {
+              if(btn.attr("estado") == "1") {
+                btn.removeClass("btn-default");
+                btn.addClass("btn-info");
+                btn.attr("estado", "2");
+              } else if(btn.attr("estado") == "2") {
+                btn.removeClass("btn-info");
+                btn.addClass("btn-warning");
+                btn.attr("estado", "3");
+              } else if(btn.attr("estado") == "3") {
+                btn.removeClass("btn-warning");
+                btn.addClass("btn-danger");
+                btn.attr("estado", "4");
+              } else if(btn.attr("estado") == "4") {
+                btn.removeClass("btn-danger");
+                btn.addClass("btn-primary");
+                btn.attr("estado", "5");
+              } else if(btn.attr("estado") == "5") {
+                btn.removeClass("btn-primary");
+                btn.addClass("btn-success");
+                btn.attr("estado", "6");
+              } else if(btn.attr("estado") == "6") {
+                btn.removeClass("btn-success");
+                btn.addClass("btn-default");
+                btn.attr("estado", "1");
               }
           })
 });
