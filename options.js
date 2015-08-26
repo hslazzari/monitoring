@@ -73,6 +73,15 @@ function save_options() {
           stall_state[name] = estado;
   });
 
+  var resolution_state = {};
+  $(".custom2").each(function() {
+          var btn = $(this);
+          var name = btn.attr("id");
+          var estado = btn.attr("estado");
+          resolution_state[name] = estado;
+  });
+
+
 
   chrome.storage.sync.set({
     endereco: ende,
@@ -84,12 +93,18 @@ function save_options() {
     enviar_para_servidor : $("#enviar_para_servidor").prop('checked'),
     simulador : $("#simulador").text(),
     estado_stall : stall_state ,
+    'resolution_state': resolution_state, 
     startup_time : $("#startup_time").val(),
     stall_duration : $("#stall_duration").val(),
     ativar_startup_stall : $("#ativar_startup_stall").prop('checked'),
     ativar_stall : $("#ativar_stall").prop('checked'),
     show_video_controls : $("#show_video_controls").prop('checked'),
-    show_questionario_simulador : $("#show_questionario_simulador").prop('checked')
+    show_questionario_simulador : $("#show_questionario_simulador").prop('checked'),
+    url_resolucao_1 : $("#url_resolucao_1").val(),
+    url_resolucao_2 : $("#url_resolucao_2").val(),
+    url_resolucao_3 : $("#url_resolucao_3").val(),
+    url_resolucao_4 : $("#url_resolucao_4").val(),
+    url_resolucao_5 : $("#url_resolucao_5").val()
 
   }, function() {
     // Update status to let user know options were saved.
@@ -119,12 +134,18 @@ function restore_options() {
     enviar_para_servidor : "true",
     simulador : $("#simulador").text(),
     estado_stall : {"pos0":"undefined"},
+    resolution_state : {"pos0":"undefined"},
     startup_time : 1000,
     stall_duration : 1000,
     ativar_startup_stall : "true",
     ativar_stall : "true",
     show_video_controls : "true",
-    show_questionario_simulador : "true"
+    show_questionario_simulador : "true",
+    url_resolucao_1 : "",
+    url_resolucao_2 : "",
+    url_resolucao_3 : "",
+    url_resolucao_4 : "",
+    url_resolucao_5 : ""
 
   }, function(items) {
 
@@ -165,14 +186,30 @@ function restore_options() {
     
 
     $("#simulador").text(items.simulador);
-    console.log(items.estado_stall);
-    if(items.estado_stall["pos0"] != undefined) {
+    //console.log(items.estado_stall);
+    if(items.estado_stall["pos0"] != "undefined") {
        $(".custom").each(function() {
           var btn = $(this);
           var name = btn.attr("id");
           btn.attr("estado", items.estado_stall[name]);
        });
     }
+
+    if(items.resolution_state["pos0"] != "undefined") {
+       $(".custom2").each(function() {
+          var btn = $(this);
+          var name = btn.attr("id");
+          btn.attr("estado", items.resolution_state[name]);
+       });
+    }
+
+    
+    $("#url_resolucao_1").val(items.url_resolucao_1);
+    $("#url_resolucao_2").val(items.url_resolucao_2);
+    $("#url_resolucao_3").val(items.url_resolucao_3);
+    $("#url_resolucao_4").val(items.url_resolucao_4);
+    $("#url_resolucao_5").val(items.url_resolucao_5);
+
 
 
     $("#startup_time").val(items.startup_time);
@@ -224,6 +261,73 @@ function refresh_page() {
               btn.addClass("btn-danger");
           }
       });
+
+      $(".custom2").each(function() {
+          var btn = $(this);
+          if(btn.attr("estado") == "1") {
+            //<!-- primary success info warning danger default -->
+              btn.removeClass("btn-primary");
+              btn.removeClass("btn-success");
+              btn.removeClass("btn-info");
+              btn.removeClass("btn-warning");
+              btn.removeClass("btn-danger");
+              btn.removeClass("btn-default");
+              
+              btn.addClass("btn-default");
+          } else if(btn.attr("estado") == "2") {
+            //<!-- primary success info warning danger default -->
+              btn.removeClass("btn-primary");
+              btn.removeClass("btn-success");
+              btn.removeClass("btn-info");
+              btn.removeClass("btn-warning");
+              btn.removeClass("btn-danger");
+              btn.removeClass("btn-default");
+              
+              btn.addClass("btn-info");
+          } else if(btn.attr("estado") == "3") {
+            //<!-- primary success info warning danger default -->
+              btn.removeClass("btn-primary");
+              btn.removeClass("btn-success");
+              btn.removeClass("btn-info");
+              btn.removeClass("btn-warning");
+              btn.removeClass("btn-danger");
+              btn.removeClass("btn-default");
+              
+              btn.addClass("btn-warning");
+          } else if(btn.attr("estado") == "4") {
+            //<!-- primary success info warning danger default -->
+              btn.removeClass("btn-primary");
+              btn.removeClass("btn-success");
+              btn.removeClass("btn-info");
+              btn.removeClass("btn-warning");
+              btn.removeClass("btn-danger");
+              btn.removeClass("btn-default");
+              
+              btn.addClass("btn-danger");
+          } else if(btn.attr("estado") == "5") {
+            //<!-- primary success info warning danger default -->
+              btn.removeClass("btn-primary");
+              btn.removeClass("btn-success");
+              btn.removeClass("btn-info");
+              btn.removeClass("btn-warning");
+              btn.removeClass("btn-danger");
+              btn.removeClass("btn-default");
+              
+              btn.addClass("btn-primary");
+          } else if(btn.attr("estado") == "6") {
+            //<!-- primary success info warning danger default -->
+              btn.removeClass("btn-primary");
+              btn.removeClass("btn-success");
+              btn.removeClass("btn-info");
+              btn.removeClass("btn-warning");
+              btn.removeClass("btn-danger");
+              btn.removeClass("btn-default");
+              
+              btn.addClass("btn-success");
+          } 
+      });
+
+      
 
 
       $("#endereco_disabled").val($("#endereco").val());

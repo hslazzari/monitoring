@@ -13,7 +13,47 @@ function Simulador(video_element) {
 	this.timer_for_stall_simulator_;
 	this.has_finished_playing_ = false;
 
+	this.url_list_ = {};
+	this.change_points_ = {};
+	this.current_src_id_ = "6";
+
 }
+
+Simulador.prototype.set_current_as_default_url = function() {
+	this.url_list_["6"] = this.video_element_.src;
+}
+
+Simulador.prototype.add_url_to_change = function(id, url) {
+	this.url_list_[id] = url;
+}
+
+
+Simulador.prototype.add_change_at_point = function(percent_points) {
+	var vd = this.video_element_;
+	var change_p = {};
+	$.each(percent_points, function( index, value ) {
+  		var position_percent = index.replace("pos", "");
+		var change_point = {
+			percent : position_percent,
+			time : (position_percent * vd.duration) / 100.0,
+			estado : value
+        };
+	        change_p[index] = change_point;
+	        console.log(change_point.percent);
+	        console.log(change_point.time);
+	        console.log(change_point.estado);
+
+  	});
+
+	this.change_points_ = change_p;
+	
+
+	//60 segundos   = 0% = 0 segundos
+	//                50% = 30 segundos
+	//                100% = 60 segundos
+	//
+}
+
 
 
 Simulador.prototype.simulate_startup_time = function() {

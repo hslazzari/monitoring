@@ -380,6 +380,8 @@ function start_simulator(configuration) {
 			simulador.change_source("hobbit-1080p.mp4");
 		}, 15000);
 		*/
+		console.log("Oi");
+		simulador.add_change_at_point(config.resolution_state);
 
 		if(config.ativar_stall) {
 			simulador.add_stall_duration(config.stall_duration);

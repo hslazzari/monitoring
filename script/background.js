@@ -19,13 +19,19 @@ chrome.storage.sync.get({
     intervalo_de_monitoramento : 1000,
     enviar_para_servidor : true,
     estado_stall : {"pos0":"undefined"},
+    resolution_state : {"pos0":"undefined"},
     startup_time : 1000,
     stall_duration : 1000,
     simulador : "Ativar simulador",
     ativar_startup_stall : true,
     ativar_stall : true,
     show_video_controls : true,
-    show_questionario_simulador : true
+    show_questionario_simulador : true,
+    url_resolucao_1 : "",
+    url_resolucao_2 : "",
+    url_resolucao_3 : "",
+    url_resolucao_4 : "",
+    url_resolucao_5 : ""
 
 }, function(items) {
         config = items;
