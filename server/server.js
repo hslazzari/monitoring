@@ -17,6 +17,22 @@ var connection = mysql.createConnection({
 });
  
 connection.connect();
+
+connection.on('close', function(err) {
+  if (err) {
+    // Oops! Unexpected closing of connection, lets reconnect back.
+    connection = mysql.createConnection({
+      host     : 'localhost',
+      user     : 'root',
+      password : 'prav',
+      database: 'monitor'
+    });
+  } else {
+    console.log('Connection closed normally.');
+  }
+});
+
+
 var video_information_id_ = 0;
 
 connection.query('SELECT MAX(video_information_id) AS result FROM video_information', function(err, rows, fields) {
@@ -633,6 +649,138 @@ function insert_into_buffer_interval(req, video_id) {
 }
 
 
+
+
+
+app.post('/api/simulador', function (req, res){
+  console.log("Simulador info received");
+ /*
+  var results = insert_into_video_information(req);
+  var video_id = results.video_id;
+
+  insert_into_video_source(req, video_id);
+  insert_into_volume_state(req, video_id);
+  insert_into_video_bytes_decoded_per_second(req, video_id);
+  insert_into_audio_bytes_decoded_per_second(req, video_id);
+  insert_into_time_in_buffer(req, video_id);
+  insert_into_skip_play(req, video_id);
+  insert_into_played_interval(req, video_id);
+  insert_into_playback_quality(req, video_id);
+  insert_into_network_state(req, video_id);
+  insert_into_mute_state(req, video_id);
+  insert_into_length_of_stall(req, video_id);
+  insert_into_frame_per_second(req, video_id);
+  insert_into_buffer_interval(req, video_id);
+  xw.endDocument();
+  
+  fs.writeFile('./results/' + results.file_name + '.xml', xw.toString(), function (err) {
+    if (err) throw err;
+  });
+  
+  var return_object = {};
+  return_object["timestamp"] = results.info.start_timestamp;
+  return_object["hash"] = results.info.hash;
+  return_object["ip"] = results.info.ip;
+
+  console.log("Monitoring info saved");
+
+  res.json(JSON.stringify(return_object));
+
+*/
+
+  var info  = { 
+              ip: req.ip, 
+              start_timestamp: req.body.start_timestamp,
+              hash: randomString(64, "aA#"),
+              video_duration: req.body.video_duration,
+              ativar_stall : req.body.ativar_stall,
+              ativar_startup_stall: req.body.ativar_startup_stall,
+              ativar_troca_de_resolucao: req.body.ativar_troca_de_resolucao,
+              show_video_controls: req.body.show_video_controls,
+              stall_duration: req.body.stall_duration,
+              startup_time: req.body.startup_time,
+              url_page_simulador: req.body.url_page_simulador,
+              url_resolucao_1: req.body.url_resolucao_1,
+              url_resolucao_2: req.body.url_resolucao_2,
+              url_resolucao_3: req.body.url_resolucao_3,
+              url_resolucao_4: req.body.url_resolucao_4,
+              url_resolucao_5: req.body.url_resolucao_5,
+              url_resolucao_6: req.body.url_resolucao_6,
+  };
+
+  //return_object["resolution_state"] = config.resolution_state;
+  //sreturn_object["estado_stall"] = config.estado_stall;
+
+
+
+
+  
+
+  var query = connection.query('INSERT INTO video_information_simulador SET ?', info, function(err, result) {
+    console.log(result.insertId);
+    //stall_position_simulador
+    if(req.body.ativar_stall) {
+      insert_into_position_simulador(req, result.insertId);
+    }
+      
+    //troca_de_resolucao_simulador
+    if(req.body.ativar_troca_de_resolucao) {
+      insert_into_troca_de_resolucao_simulador(req, result.insertId);
+    }
+
+    if(err)
+      console.log(err);
+  });
+
+
+  var return_object = {};
+  return_object["timestamp"] = info.start_timestamp;
+  return_object["hash"] = info.hash;
+  return_object["ip"] = info.ip;
+  
+  res.json(JSON.stringify(return_object));
+
+});
+
+function insert_into_troca_de_resolucao_simulador(req, simulador_id) {
+    var keys = Object.keys(req.body.resolution_state);
+    
+    for(i = 0; i < keys.length; i++) {
+      var info  = { 
+        id_simulador : simulador_id,
+        position_percent : keys[i],
+        url_resolucao : "url_resolucao_"+req.body.resolution_state[keys[i]]
+      };  
+      
+      var query = connection.query('INSERT INTO troca_de_resolucao_simulador SET ?', info, function(err, result) {
+          if(err)
+            console.log(err);
+      });
+    }
+}
+
+function insert_into_position_simulador(req, simulador_id) {
+
+
+
+       var keys = Object.keys(req.body.estado_stall);
+       for(i = 0; i < keys.length; i++) {
+          if(req.body.estado_stall[keys[i]] == "bad"){
+            var info  = { 
+              id_simulador : simulador_id,
+              position_percent : keys[i]
+            };  
+            var query = connection.query('INSERT INTO stall_position_simulador SET ?', info, function(err, result) {
+              if(err)
+                console.log(err);
+            });
+
+          }
+       }
+
+
+
+}
 
 
 

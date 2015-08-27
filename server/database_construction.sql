@@ -1,10 +1,10 @@
 CREATE DATABASE  IF NOT EXISTS `monitor` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `monitor`;
--- MySQL dump 10.13  Distrib 5.6.19, for osx10.7 (i386)
+-- MySQL dump 10.13  Distrib 5.6.19, for linux-glibc2.5 (x86_64)
 --
 -- Host: localhost    Database: monitor
 -- ------------------------------------------------------
--- Server version	5.6.14
+-- Server version	5.6.23
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -32,7 +32,7 @@ CREATE TABLE `audio_bytes_decoded_per_second` (
   `audio_bytes` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,6 @@ CREATE TABLE `audio_bytes_decoded_per_second` (
 
 LOCK TABLES `audio_bytes_decoded_per_second` WRITE;
 /*!40000 ALTER TABLE `audio_bytes_decoded_per_second` DISABLE KEYS */;
-INSERT INTO `audio_bytes_decoded_per_second` VALUES (1,176.043,1438263884025,0,144999),(2,177.041,1438263885030,0,31650),(3,178.04,1438263886032,0,27969),(4,177.343,1438263901723,1,186953);
 /*!40000 ALTER TABLE `audio_bytes_decoded_per_second` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -59,7 +58,7 @@ CREATE TABLE `buffer_interval` (
   `video_information_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -68,7 +67,6 @@ CREATE TABLE `buffer_interval` (
 
 LOCK TABLES `buffer_interval` WRITE;
 /*!40000 ALTER TABLE `buffer_interval` DISABLE KEYS */;
-INSERT INTO `buffer_interval` VALUES (1,0,14.656,0),(2,172.8,178.214,0),(3,0,14.656,1),(4,172.8,178.214,1);
 /*!40000 ALTER TABLE `buffer_interval` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -87,7 +85,7 @@ CREATE TABLE `frame_per_second` (
   `number_of_frames` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -96,7 +94,6 @@ CREATE TABLE `frame_per_second` (
 
 LOCK TABLES `frame_per_second` WRITE;
 /*!40000 ALTER TABLE `frame_per_second` DISABLE KEYS */;
-INSERT INTO `frame_per_second` VALUES (1,176.043,1438263884025,0,107),(2,177.041,1438263885030,0,25),(3,178.04,1438263886032,0,23),(4,177.343,1438263901723,1,141);
 /*!40000 ALTER TABLE `frame_per_second` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -115,7 +112,7 @@ CREATE TABLE `length_of_stall` (
   `duration_of_stall` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -124,7 +121,6 @@ CREATE TABLE `length_of_stall` (
 
 LOCK TABLES `length_of_stall` WRITE;
 /*!40000 ALTER TABLE `length_of_stall` DISABLE KEYS */;
-INSERT INTO `length_of_stall` VALUES (1,175.788,1438263883684,0,0.104),(2,0,1438263899768,1,0.102),(3,176.484,1438263900642,1,0.26);
 /*!40000 ALTER TABLE `length_of_stall` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -143,7 +139,7 @@ CREATE TABLE `mute_state` (
   `video_information_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -152,7 +148,6 @@ CREATE TABLE `mute_state` (
 
 LOCK TABLES `mute_state` WRITE;
 /*!40000 ALTER TABLE `mute_state` DISABLE KEYS */;
-INSERT INTO `mute_state` VALUES (1,176.043,1438263884026,0,0),(2,176.484,1438263900723,0,1);
 /*!40000 ALTER TABLE `mute_state` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -172,7 +167,7 @@ CREATE TABLE `network_state` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -181,7 +176,6 @@ CREATE TABLE `network_state` (
 
 LOCK TABLES `network_state` WRITE;
 /*!40000 ALTER TABLE `network_state` DISABLE KEYS */;
-INSERT INTO `network_state` VALUES (1,176.043,1438263884026,1,0),(2,176.484,1438263900723,1,1);
 /*!40000 ALTER TABLE `network_state` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -201,7 +195,7 @@ CREATE TABLE `playback_quality` (
   `video_information_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -210,7 +204,6 @@ CREATE TABLE `playback_quality` (
 
 LOCK TABLES `playback_quality` WRITE;
 /*!40000 ALTER TABLE `playback_quality` DISABLE KEYS */;
-INSERT INTO `playback_quality` VALUES (1,1438263884024,0,1280,720,0),(2,1438263900721,0,1280,720,1);
 /*!40000 ALTER TABLE `playback_quality` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -229,7 +222,7 @@ CREATE TABLE `played_interval` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -238,7 +231,6 @@ CREATE TABLE `played_interval` (
 
 LOCK TABLES `played_interval` WRITE;
 /*!40000 ALTER TABLE `played_interval` DISABLE KEYS */;
-INSERT INTO `played_interval` VALUES (1,0,0.719245,0),(2,175.788,178.214,0),(3,0,0.742464,1),(4,176.484,178.214,1);
 /*!40000 ALTER TABLE `played_interval` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -262,7 +254,6 @@ CREATE TABLE `questionario` (
   `pais` varchar(45) DEFAULT NULL,
   `tempo` int(11) DEFAULT NULL,
   `comentario` varchar(300) DEFAULT NULL,
-  `opinion` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`idquestionario`),
   UNIQUE KEY `idquestionario_UNIQUE` (`idquestionario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -292,7 +283,7 @@ CREATE TABLE `skip_play` (
   `skip_duration` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -301,8 +292,31 @@ CREATE TABLE `skip_play` (
 
 LOCK TABLES `skip_play` WRITE;
 /*!40000 ALTER TABLE `skip_play` DISABLE KEYS */;
-INSERT INTO `skip_play` VALUES (1,0,1438263883016,0,0.510274),(2,0.719245,1438263883529,0,175.138),(3,0,1438263899714,1,0.115551),(4,0.719245,1438263900532,1,175.857);
 /*!40000 ALTER TABLE `skip_play` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `stall_position_simulador`
+--
+
+DROP TABLE IF EXISTS `stall_position_simulador`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `stall_position_simulador` (
+  `id_simulador` int(11) NOT NULL,
+  `position_percent` varchar(8) NOT NULL,
+  PRIMARY KEY (`id_simulador`,`position_percent`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `stall_position_simulador`
+--
+
+LOCK TABLES `stall_position_simulador` WRITE;
+/*!40000 ALTER TABLE `stall_position_simulador` DISABLE KEYS */;
+INSERT INTO `stall_position_simulador` VALUES (4,'pos5');
+/*!40000 ALTER TABLE `stall_position_simulador` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -320,7 +334,7 @@ CREATE TABLE `time_in_buffer` (
   `remaining_time_in_buffer` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -329,8 +343,32 @@ CREATE TABLE `time_in_buffer` (
 
 LOCK TABLES `time_in_buffer` WRITE;
 /*!40000 ALTER TABLE `time_in_buffer` DISABLE KEYS */;
-INSERT INTO `time_in_buffer` VALUES (1,176.043,1438263884025,0,2.17092),(2,177.041,1438263885030,0,1.17251),(3,178.04,1438263886032,0,0.174091),(4,176.484,1438263900722,1,1.7296),(5,177.343,1438263901723,1,0.87104);
 /*!40000 ALTER TABLE `time_in_buffer` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `troca_de_resolucao_simulador`
+--
+
+DROP TABLE IF EXISTS `troca_de_resolucao_simulador`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `troca_de_resolucao_simulador` (
+  `id_simulador` int(11) NOT NULL,
+  `position_percent` varchar(8) NOT NULL,
+  `url_resolucao` varchar(25) NOT NULL,
+  PRIMARY KEY (`id_simulador`,`position_percent`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `troca_de_resolucao_simulador`
+--
+
+LOCK TABLES `troca_de_resolucao_simulador` WRITE;
+/*!40000 ALTER TABLE `troca_de_resolucao_simulador` DISABLE KEYS */;
+INSERT INTO `troca_de_resolucao_simulador` VALUES (8,'pos0','url_resolucao_6'),(8,'pos1','url_resolucao_1'),(8,'pos100','url_resolucao_6'),(8,'pos11','url_resolucao_6'),(8,'pos12','url_resolucao_6'),(8,'pos13','url_resolucao_6'),(8,'pos14','url_resolucao_6'),(8,'pos15','url_resolucao_6'),(8,'pos16','url_resolucao_6'),(8,'pos17','url_resolucao_6'),(8,'pos18','url_resolucao_6'),(8,'pos19','url_resolucao_6'),(8,'pos2','url_resolucao_1'),(8,'pos20','url_resolucao_6'),(8,'pos21','url_resolucao_6'),(8,'pos22','url_resolucao_6'),(8,'pos23','url_resolucao_6'),(8,'pos24','url_resolucao_6'),(8,'pos25','url_resolucao_6'),(8,'pos26','url_resolucao_6'),(8,'pos27','url_resolucao_6'),(8,'pos28','url_resolucao_6'),(8,'pos29','url_resolucao_6'),(8,'pos3','url_resolucao_6'),(8,'pos30','url_resolucao_6'),(8,'pos31','url_resolucao_6'),(8,'pos32','url_resolucao_6'),(8,'pos33','url_resolucao_6'),(8,'pos34','url_resolucao_6'),(8,'pos35','url_resolucao_6'),(8,'pos36','url_resolucao_6'),(8,'pos37','url_resolucao_6'),(8,'pos38','url_resolucao_6'),(8,'pos39','url_resolucao_6'),(8,'pos4','url_resolucao_6'),(8,'pos40','url_resolucao_6'),(8,'pos41','url_resolucao_6'),(8,'pos42','url_resolucao_6'),(8,'pos43','url_resolucao_6'),(8,'pos44','url_resolucao_6'),(8,'pos45','url_resolucao_6'),(8,'pos46','url_resolucao_6'),(8,'pos47','url_resolucao_6'),(8,'pos48','url_resolucao_6'),(8,'pos49','url_resolucao_6'),(8,'pos5','url_resolucao_6'),(8,'pos50','url_resolucao_6'),(8,'pos51','url_resolucao_6'),(8,'pos52','url_resolucao_6'),(8,'pos53','url_resolucao_6'),(8,'pos54','url_resolucao_6'),(8,'pos55','url_resolucao_6'),(8,'pos56','url_resolucao_6'),(8,'pos57','url_resolucao_6'),(8,'pos58','url_resolucao_6'),(8,'pos59','url_resolucao_6'),(8,'pos6','url_resolucao_6'),(8,'pos60','url_resolucao_6'),(8,'pos61','url_resolucao_6'),(8,'pos62','url_resolucao_6'),(8,'pos63','url_resolucao_6'),(8,'pos64','url_resolucao_6'),(8,'pos65','url_resolucao_6'),(8,'pos66','url_resolucao_6'),(8,'pos67','url_resolucao_6'),(8,'pos68','url_resolucao_6'),(8,'pos69','url_resolucao_6'),(8,'pos7','url_resolucao_6'),(8,'pos70','url_resolucao_6'),(8,'pos71','url_resolucao_6'),(8,'pos72','url_resolucao_6'),(8,'pos73','url_resolucao_6'),(8,'pos74','url_resolucao_6'),(8,'pos75','url_resolucao_6'),(8,'pos76','url_resolucao_6'),(8,'pos77','url_resolucao_6'),(8,'pos78','url_resolucao_6'),(8,'pos79','url_resolucao_6'),(8,'pos8','url_resolucao_6'),(8,'pos80','url_resolucao_6'),(8,'pos81','url_resolucao_6'),(8,'pos82','url_resolucao_6'),(8,'pos83','url_resolucao_6'),(8,'pos84','url_resolucao_6'),(8,'pos85','url_resolucao_6'),(8,'pos86','url_resolucao_6'),(8,'pos87','url_resolucao_6'),(8,'pos88','url_resolucao_6'),(8,'pos89','url_resolucao_6'),(8,'pos9','url_resolucao_6'),(8,'pos90','url_resolucao_6'),(8,'pos91','url_resolucao_6'),(8,'pos92','url_resolucao_6'),(8,'pos93','url_resolucao_6'),(8,'pos94','url_resolucao_6'),(8,'pos95','url_resolucao_6'),(8,'pos96','url_resolucao_6'),(8,'pos97','url_resolucao_6'),(8,'pos98','url_resolucao_6'),(8,'pos99','url_resolucao_6'),(9,'pos0','url_resolucao_6'),(9,'pos1','url_resolucao_1'),(9,'pos100','url_resolucao_6'),(9,'pos11','url_resolucao_6'),(9,'pos12','url_resolucao_6'),(9,'pos13','url_resolucao_6'),(9,'pos14','url_resolucao_6'),(9,'pos15','url_resolucao_6'),(9,'pos16','url_resolucao_6'),(9,'pos17','url_resolucao_6'),(9,'pos18','url_resolucao_6'),(9,'pos19','url_resolucao_6'),(9,'pos2','url_resolucao_1'),(9,'pos20','url_resolucao_6'),(9,'pos21','url_resolucao_6'),(9,'pos22','url_resolucao_6'),(9,'pos23','url_resolucao_6'),(9,'pos24','url_resolucao_6'),(9,'pos25','url_resolucao_6'),(9,'pos26','url_resolucao_6'),(9,'pos27','url_resolucao_6'),(9,'pos28','url_resolucao_6'),(9,'pos29','url_resolucao_6'),(9,'pos3','url_resolucao_6'),(9,'pos30','url_resolucao_6'),(9,'pos31','url_resolucao_6'),(9,'pos32','url_resolucao_6'),(9,'pos33','url_resolucao_6'),(9,'pos34','url_resolucao_6'),(9,'pos35','url_resolucao_6'),(9,'pos36','url_resolucao_6'),(9,'pos37','url_resolucao_6'),(9,'pos38','url_resolucao_6'),(9,'pos39','url_resolucao_6'),(9,'pos4','url_resolucao_6'),(9,'pos40','url_resolucao_6'),(9,'pos41','url_resolucao_6'),(9,'pos42','url_resolucao_6'),(9,'pos43','url_resolucao_6'),(9,'pos44','url_resolucao_6'),(9,'pos45','url_resolucao_6'),(9,'pos46','url_resolucao_6'),(9,'pos47','url_resolucao_6'),(9,'pos48','url_resolucao_6'),(9,'pos49','url_resolucao_6'),(9,'pos5','url_resolucao_6'),(9,'pos50','url_resolucao_6'),(9,'pos51','url_resolucao_6'),(9,'pos52','url_resolucao_6'),(9,'pos53','url_resolucao_6'),(9,'pos54','url_resolucao_6'),(9,'pos55','url_resolucao_6'),(9,'pos56','url_resolucao_6'),(9,'pos57','url_resolucao_6'),(9,'pos58','url_resolucao_6'),(9,'pos59','url_resolucao_6'),(9,'pos6','url_resolucao_6'),(9,'pos60','url_resolucao_6'),(9,'pos61','url_resolucao_6'),(9,'pos62','url_resolucao_6'),(9,'pos63','url_resolucao_6'),(9,'pos64','url_resolucao_6'),(9,'pos65','url_resolucao_6'),(9,'pos66','url_resolucao_6'),(9,'pos67','url_resolucao_6'),(9,'pos68','url_resolucao_6'),(9,'pos69','url_resolucao_6'),(9,'pos7','url_resolucao_6'),(9,'pos70','url_resolucao_6'),(9,'pos71','url_resolucao_6'),(9,'pos72','url_resolucao_6'),(9,'pos73','url_resolucao_6'),(9,'pos74','url_resolucao_6'),(9,'pos75','url_resolucao_6'),(9,'pos76','url_resolucao_6'),(9,'pos77','url_resolucao_6'),(9,'pos78','url_resolucao_6'),(9,'pos79','url_resolucao_6'),(9,'pos8','url_resolucao_6'),(9,'pos80','url_resolucao_6'),(9,'pos81','url_resolucao_6'),(9,'pos82','url_resolucao_6'),(9,'pos83','url_resolucao_6'),(9,'pos84','url_resolucao_6'),(9,'pos85','url_resolucao_6'),(9,'pos86','url_resolucao_6'),(9,'pos87','url_resolucao_6'),(9,'pos88','url_resolucao_6'),(9,'pos89','url_resolucao_6'),(9,'pos9','url_resolucao_6');
+/*!40000 ALTER TABLE `troca_de_resolucao_simulador` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -348,7 +386,7 @@ CREATE TABLE `video_bytes_decoded_per_second` (
   `video_bytes` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -357,7 +395,6 @@ CREATE TABLE `video_bytes_decoded_per_second` (
 
 LOCK TABLES `video_bytes_decoded_per_second` WRITE;
 /*!40000 ALTER TABLE `video_bytes_decoded_per_second` DISABLE KEYS */;
-INSERT INTO `video_bytes_decoded_per_second` VALUES (1,176.043,1438263884025,0,758882),(2,177.041,1438263885030,0,68495),(3,178.04,1438263886032,0,239),(4,177.343,1438263901723,1,828291);
 /*!40000 ALTER TABLE `video_bytes_decoded_per_second` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -394,8 +431,47 @@ CREATE TABLE `video_information` (
 
 LOCK TABLES `video_information` WRITE;
 /*!40000 ALTER TABLE `video_information` DISABLE KEYS */;
-INSERT INTO `video_information` VALUES ('::ffff:127.0.0.1',1438263883015,'XEcW6glE3lxRdmrMqeMhucVJE5AVWpiG8AgG4Qjexbu9Mag7UtobSpTCceccyRHM','',3.14504,3.24903,0.104,1,178.214,0,178.214,0,'auto',0),('::ffff:127.0.0.1',1438263899713,'AdOlym5FUEODi5bTMQzVJThws5vg7746TB60FK7KItzO72rbR0UNIOMwLJ2dN8mv','',2.47206,2.83406,0.362,2,178.214,0,178.214,1,'auto',0.102);
 /*!40000 ALTER TABLE `video_information` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `video_information_simulador`
+--
+
+DROP TABLE IF EXISTS `video_information_simulador`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `video_information_simulador` (
+  `idvideo_information_simulador` int(11) NOT NULL AUTO_INCREMENT,
+  `ip` varchar(40) NOT NULL,
+  `hash` varchar(64) NOT NULL,
+  `start_timestamp` bigint(64) NOT NULL,
+  `video_duration` float NOT NULL,
+  `ativar_stall` varchar(8) NOT NULL,
+  `ativar_startup_stall` varchar(8) NOT NULL,
+  `show_video_controls` varchar(8) NOT NULL,
+  `stall_duration` int(11) NOT NULL,
+  `startup_time` int(11) NOT NULL,
+  `url_page_simulador` varchar(128) NOT NULL,
+  `url_resolucao_1` varchar(128) NOT NULL,
+  `url_resolucao_2` varchar(128) NOT NULL,
+  `url_resolucao_3` varchar(128) NOT NULL,
+  `url_resolucao_4` varchar(128) NOT NULL,
+  `url_resolucao_5` varchar(128) NOT NULL,
+  `url_resolucao_6` varchar(128) NOT NULL,
+  `ativar_troca_de_resolucao` varchar(8) NOT NULL,
+  PRIMARY KEY (`idvideo_information_simulador`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `video_information_simulador`
+--
+
+LOCK TABLES `video_information_simulador` WRITE;
+/*!40000 ALTER TABLE `video_information_simulador` DISABLE KEYS */;
+INSERT INTO `video_information_simulador` VALUES (1,'127.0.0.1','ni4znVh68sipPdgp087oyNrELvtivLSb4PDPAXRWajqEy0k71QKZS2IWymIz6nHb',1440682458994,178.214,'0','0','1',5000,1020,'http://200.220.254.84/hobbit-480p.html','hobbit-1080p.mp4','','','','','http://200.220.254.84/hobbit-720p.mp4','0'),(2,'127.0.0.1','IlMjjypHtetYD5GmMzjIoQ60ZNJGW2SfwVI0f08Y2x3RLXrvoRQLh0jWsORou7Ft',1440682502465,178.214,'0','0','1',5000,1020,'http://200.220.254.84/hobbit-480p.html','hobbit-1080p.mp4','','','','','http://200.220.254.84/hobbit-720p.mp4','0'),(3,'127.0.0.1','3KDUca62pf70PnsaupM0QT8wEfhA5YPiO6oPcbtVljlkIxXWaUPksIWAnG5JXPDw',1440682596291,178.214,'0','1','1',5000,1020,'http://200.220.254.84/hobbit-480p.html','hobbit-1080p.mp4','','','','','http://200.220.254.84/hobbit-720p.mp4','1'),(4,'127.0.0.1','XIb576FxlADE8PgVYgjDutsdRJCafkJWZolW2qLgxSby5w7GsKBWO7xmKV5NeUIU',1440683390743,178.214,'0','1','1',5000,1020,'http://200.220.254.84/hobbit-480p.html','hobbit-1080p.mp4','','','','','http://200.220.254.84/hobbit-720p.mp4','1'),(5,'127.0.0.1','k0di6rnrs41jcYI3bpubE7dtXbuzfY1990tK8zMAK7o3DS8FQveXsz3Mttr7IQ4I',1440683868664,178.214,'0','0','1',5000,1020,'http://200.220.254.84/hobbit-480p.html','hobbit-1080p.mp4','','','','','http://200.220.254.84/hobbit-720p.mp4','0'),(6,'127.0.0.1','BtUROU4EylZmKPGNGl0gOgt47MsEYDkrEmTdpQaXPdedccfbDbTtwubmOXoRLqyL',1440683896215,178.214,'0','0','1',5000,1020,'http://200.220.254.84/hobbit-480p.html','hobbit-1080p.mp4','','','','','http://200.220.254.84/hobbit-720p.mp4','0'),(7,'127.0.0.1','dFl5YGZ3MWRThnzLyeoL68x7pUflsj08R8EepLWeb0A1jS8FBVpw5Gu2dMC3iQUW',1440683962669,178.214,'0','0','1',5000,1020,'http://200.220.254.84/hobbit-480p.html','hobbit-1080p.mp4','','','','','http://200.220.254.84/hobbit-720p.mp4','0'),(8,'127.0.0.1','vXqVr2RnRAKMEQOhI0wSwaLMS24JMwx50WvaNzLDE5Vkqh80LKnt5am5ORBPx7D0',1440683987382,178.214,'0','0','1',5000,1020,'http://200.220.254.84/hobbit-480p.html','hobbit-1080p.mp4','','','','','http://200.220.254.84/hobbit-720p.mp4','1'),(9,'127.0.0.1','QqxUQHgJ5hhTdtUOaG00sH5fHDu9RQOPyOvNEMjptA1E3rwwMA6YqXBmJIs5nlMi',1440684189165,178.214,'0','0','1',5000,1020,'http://200.220.254.84/hobbit-480p.html','hobbit-1080p.mp4','','','','','http://200.220.254.84/hobbit-720p.mp4','1');
+/*!40000 ALTER TABLE `video_information_simulador` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -411,7 +487,7 @@ CREATE TABLE `video_source` (
   `video_information_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -420,7 +496,6 @@ CREATE TABLE `video_source` (
 
 LOCK TABLES `video_source` WRITE;
 /*!40000 ALTER TABLE `video_source` DISABLE KEYS */;
-INSERT INTO `video_source` VALUES (1,'http://200.220.254.84/b.html',0),(2,'http://200.220.254.84/hobbit-720p.mp4',0),(3,'http://200.220.254.84/b.html',1),(4,'http://200.220.254.84/hobbit-720p.mp4',1);
 /*!40000 ALTER TABLE `video_source` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -439,7 +514,7 @@ CREATE TABLE `volume_state` (
   `volume` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -448,7 +523,6 @@ CREATE TABLE `volume_state` (
 
 LOCK TABLES `volume_state` WRITE;
 /*!40000 ALTER TABLE `volume_state` DISABLE KEYS */;
-INSERT INTO `volume_state` VALUES (1,176.043,1438263884026,0,1),(2,176.484,1438263900723,1,1);
 /*!40000 ALTER TABLE `volume_state` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -461,4 +535,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-07-30 10:52:34
+-- Dump completed on 2015-08-27 11:03:33

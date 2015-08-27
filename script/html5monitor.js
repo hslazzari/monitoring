@@ -52,6 +52,10 @@ function normalize(c) {
     c.show_questionario_simulador = false;
 
 
+if(c.ativar_troca_de_resolucao == "true")
+    c.ativar_troca_de_resolucao = true;
+  if(c.ativar_troca_de_resolucao == "false")
+    c.ativar_troca_de_resolucao = false;
 
 
 
@@ -62,6 +66,41 @@ function normalize(c) {
 
 var config = null;
 var $link = null;
+
+
+
+function send_simulador(end, config, current_source, video_duration) {
+	var return_object = {};
+	return_object["start_timestamp"] = Date.now();
+	return_object["ativar_stall"] = config.ativar_stall;
+	return_object["ativar_startup_stall"] = config.ativar_startup_stall;
+	return_object["ativar_troca_de_resolucao"] = config.ativar_troca_de_resolucao;
+	return_object["show_video_controls"] = config.show_video_controls;
+	return_object["stall_duration"] = config.stall_duration;
+	return_object["startup_time"] = config.startup_time;
+	return_object["url_page_simulador"] = config.url_page_simulador;
+	return_object["url_resolucao_1"] = config.url_resolucao_1;
+	return_object["url_resolucao_2"] = config.url_resolucao_2;
+	return_object["url_resolucao_3"] = config.url_resolucao_3;
+	return_object["url_resolucao_4"] = config.url_resolucao_4;
+	return_object["url_resolucao_5"] = config.url_resolucao_5;
+	return_object["url_resolucao_6"] = current_source;
+	return_object["resolution_state"] = config.resolution_state;
+	return_object["estado_stall"] = config.estado_stall;
+	return_object["video_duration"] = video_duration;
+
+	chrome.runtime.sendMessage({
+		action: 'simulador',
+		url: end,
+		type: "POST",
+		data: return_object,
+	},  function(responseText) {
+	});
+
+}
+
+
+
 
 function send_questionario(end, opinion) {
 	var return_object = {};
@@ -365,6 +404,11 @@ function start_simulator(configuration) {
 		var video_element = document.getElementsByTagName('video')[0];
 		
 		var simulador = new Simulador(video_element);
+
+		if(config.show_questionario_simulador && config.enviar_para_servidor) {
+			send_simulador(configuration.endereco, configuration, video_element.currentSrc, video_element.duration);
+		}
+
 		if(config.show_video_controls)
 		 	video_element.controls = true;
 		else
@@ -375,13 +419,20 @@ function start_simulator(configuration) {
 		
 		if(config.ativar_startup_stall)
 			simulador.simulate_startup_time();
+
 		
-		/*setTimeout(function() { 
-			simulador.change_source("hobbit-1080p.mp4");
-		}, 15000);
-		*/
-		console.log("Oi");
-		simulador.add_change_at_point(config.resolution_state);
+		if(config.ativar_troca_de_resolucao && url == config.url_page_simulador) {
+			simulador.add_url_to_change("1", config.url_resolucao_1.trim());
+			simulador.add_url_to_change("2", config.url_resolucao_2.trim());
+			simulador.add_url_to_change("3", config.url_resolucao_3.trim());
+			simulador.add_url_to_change("4", config.url_resolucao_4.trim());
+			simulador.add_url_to_change("5", config.url_resolucao_5.trim());
+		
+			simulador.add_change_at_point(config.resolution_state);
+			simulador.start_change_creator();
+		}
+		
+		
 
 		if(config.ativar_stall) {
 			simulador.add_stall_duration(config.stall_duration);

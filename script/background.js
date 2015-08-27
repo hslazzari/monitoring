@@ -31,7 +31,9 @@ chrome.storage.sync.get({
     url_resolucao_2 : "",
     url_resolucao_3 : "",
     url_resolucao_4 : "",
-    url_resolucao_5 : ""
+    url_resolucao_5 : "",
+    ativar_troca_de_resolucao : true,
+    url_page_simulador : ""
 
 }, function(items) {
         config = items;
@@ -96,6 +98,10 @@ if(c.show_video_controls == "true")
     c.show_questionario_simulador = false;
 
 
+if(c.ativar_troca_de_resolucao == "true")
+    c.ativar_troca_de_resolucao = true;
+  if(c.ativar_troca_de_resolucao == "false")
+    c.ativar_troca_de_resolucao = false;
 
 
     c.startup_time = Number(c.startup_time);
@@ -117,6 +123,21 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             success: function(result) {
                 console.log(result);
                 monitor_questionario_join = $.parseJSON(result);
+            }
+
+        });
+       
+    }
+
+    if (request.action == "simulador") {
+        $.ajax({
+            url: request.url + "/api/" + request.action,
+            type: request.type,
+            data: JSON.stringify(request.data),
+            contentType: "application/json",
+            success: function(result) {
+                console.log(result);
+                simulador_questionario_join = $.parseJSON(result);
             }
 
         });

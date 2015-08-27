@@ -48,7 +48,10 @@ function normalize(c) {
   if(c.show_questionario_simulador == "false")
     c.show_questionario_simulador = false;
 
-
+if(c.ativar_troca_de_resolucao == "true")
+    c.ativar_troca_de_resolucao = true;
+  if(c.ativar_troca_de_resolucao == "false")
+    c.ativar_troca_de_resolucao = false;
 
   
 
@@ -104,7 +107,10 @@ function save_options() {
     url_resolucao_2 : $("#url_resolucao_2").val(),
     url_resolucao_3 : $("#url_resolucao_3").val(),
     url_resolucao_4 : $("#url_resolucao_4").val(),
-    url_resolucao_5 : $("#url_resolucao_5").val()
+    url_resolucao_5 : $("#url_resolucao_5").val(),
+    ativar_troca_de_resolucao : $("#ativar_troca_de_resolucao").prop('checked'),
+    url_page_simulador : $("#url_page_simulador").val()
+
 
   }, function() {
     // Update status to let user know options were saved.
@@ -145,7 +151,9 @@ function restore_options() {
     url_resolucao_2 : "",
     url_resolucao_3 : "",
     url_resolucao_4 : "",
-    url_resolucao_5 : ""
+    url_resolucao_5 : "",
+    ativar_troca_de_resolucao : "true",
+    url_page_simulador : ""
 
   }, function(items) {
 
@@ -179,6 +187,8 @@ function restore_options() {
     $("#ativar_startup_stall").prop('checked', items.ativar_startup_stall);
     
     $("#ativar_stall").prop('checked', items.ativar_stall);
+
+    $("#ativar_troca_de_resolucao").prop('checked', items.ativar_troca_de_resolucao);
 
     $("#show_video_controls").prop('checked', items.show_video_controls);
 
@@ -215,6 +225,8 @@ function restore_options() {
     $("#startup_time").val(items.startup_time);
 
     $("#stall_duration").val(items.stall_duration);
+
+    $("#url_page_simulador").val(items.url_page_simulador);
 
     refresh_page();
 
@@ -388,6 +400,33 @@ $(".custom").each(function() {
 
 
 $("#calculator").click(function() {
+      BootstrapDialog.show( {
+          title: "Calculadora para porcentagem",
+          message: $('<div></div>').load(chrome.extension.getURL("calculator.html")),
+          closable: true,
+          closeByBackdrop: false,
+          closeByKeyboard: false,
+          buttons: [{
+              label: 'Calcular',
+              cssClass: 'btn-primary',
+              action: function(dialogItself) {
+                var result = Number($("#posicao").val().replace(",", ".")) * 100.0;
+                result = result / Number($("#duracao").val().replace(",", "."))
+
+                $("#resultado_exato").text("Resultado exato: " + result);
+                $("#resultado_aproximado").text("Resultado aproximado: " + Math.round(result));
+              }}, {
+                  label: 'Cancelar',
+                  action: function(dialogItself) {
+                          dialogItself.close();
+                        }
+              }]
+          });
+});
+
+
+
+$("#calculator2").click(function() {
       BootstrapDialog.show( {
           title: "Calculadora para porcentagem",
           message: $('<div></div>').load(chrome.extension.getURL("calculator.html")),
