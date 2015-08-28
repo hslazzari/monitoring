@@ -32,6 +32,8 @@ connection.on('close', function(err) {
   }
 });
 
+app.set('view engine', 'ejs');
+
 
 var video_information_id_ = 0;
 
@@ -61,10 +63,50 @@ var exec = require('child_process').exec;
 //function puts(error, stdout, stderr) { sys.puts(stdout) }
 //exec("ls -la", puts);
     
-app.get('/api/monitor', function (req, res){
+app.get('/api/monitor', function (req, res) {
+  connection.query(
+    ' SELECT distinct questionario.opinion, questionario.ip, video_information.video_information_id, video_information.start_timestamp, video_information.video_duration, video_information.total_stall_length, video_start_time' +
+    ' FROM questionario' +
+    ' INNER JOIN  video_information' + 
+    ' ON questionario.ip=video_information.ip AND questionario.hash =video_information.hash AND questionario.timestamp = video_information.start_timestamp;'
+, function(err, rows, fields) {
+    if (err)
+      console.log(err);
+    else {
+      
+      for(var i = 0; i < rows.length; i++) {
+
+        var date = new Date(Number(rows[i].start_timestamp));
+        var hours = date.getHours();
+        var minutes = "0" + date.getMinutes();
+        var seconds = "0" + date.getSeconds();
+        var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+        
+        rows[i].start_timestamp = formattedTime;
+      
+      }
+
+
   
 
+      res.render('pages/monitor_result.ejs', {
+        results : rows
+      });
+
+
+    }
+
+
+    
+  });
+
 });
+
+  
+
+
+
+
 
 function insert_into_video_information(req) {
   xw = new XMLWriter;
@@ -717,6 +759,7 @@ app.post('/api/simulador', function (req, res){
   
 
   var query = connection.query('INSERT INTO video_information_simulador SET ?', info, function(err, result) {
+    
     console.log(result.insertId);
     //stall_position_simulador
     if(req.body.ativar_stall) {
@@ -842,7 +885,12 @@ app.post('/api/questionario', function (req, res){
 });
 
 
-
+/*
+   SELECT distinct questionario.opinion, video_information_simulador.idvideo_information_simulador, video_information_simulador.url_page_simulador
+   FROM questionario
+   INNER JOIN  video_information_simulador
+   ON questionario.ip=video_information_simulador.ip AND questionario.hash =video_information_simulador.hash AND questionario.timestamp = video_information_simulador.start_timestamp;
+*/
 
 function insert_into_questionario(req) {
  
@@ -894,6 +942,66 @@ function randomString(length, chars) {
     for (var i = length; i > 0; --i) result += mask[Math.round(Math.random() * (mask.length - 1))];
     return result;
 }
+
+
+
+
+
+app.get('/api/simulador', function (req, res){
+  connection.query('SELECT distinct questionario.opinion, questionario.ip, video_information_simulador.ativar_stall, video_information_simulador.ativar_startup_stall, video_information_simulador.ativar_troca_de_resolucao'+
+    ' FROM questionario' +
+    ' INNER JOIN  video_information_simulador' +
+    ' ON questionario.ip=video_information_simulador.ip AND questionario.hash =video_information_simulador.hash AND questionario.timestamp = video_information_simulador.start_timestamp;', function(err, rows, fields) {
+    if (err)
+      console.log(err);
+    else {
+      console.log(rows[0])
+
+      for(var i = 0; i < rows.length; i++) {
+        if(rows[i].ativar_stall =='0')
+          rows[i].ativar_stall = "False";
+        else
+          rows[i].ativar_stall = "True";
+        
+        if(rows[i].ativar_startup_stall =='0')
+          rows[i].ativar_startup_stall = "False";
+        else
+          rows[i].ativar_startup_stall = "True";
+        
+        if(rows[i].ativar_troca_de_resolucao =='0')
+          rows[i].ativar_troca_de_resolucao = "False";
+        else
+          rows[i].ativar_troca_de_resolucao = "True";
+        
+      }
+
+
+  
+
+      res.render('pages/simulated_result.ejs', {
+        results : rows
+      });
+
+
+    }
+
+
+    
+});
+
+
+
+
+  //res.json(JSON.stringify(return_object));
+
+});
+
+
+// index page 
+app.get('/', function(req, res) {
+    res.render('pages/index');
+});
+
 
 
 

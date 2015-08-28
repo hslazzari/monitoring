@@ -406,6 +406,7 @@ function start_simulator(configuration) {
 		var simulador = new Simulador(video_element);
 
 		if(config.show_questionario_simulador && config.enviar_para_servidor) {
+			console.log("ENVIAR");
 			send_simulador(configuration.endereco, configuration, video_element.currentSrc, video_element.duration);
 		}
 
@@ -454,14 +455,16 @@ function start_simulator(configuration) {
 				       	label: 'Boa',
 				        cssClass: 'btn-primary',
 				        action: function(dialogItself) {
-					              	//send_questionario(configuration.endereco, "Boa");
+				        			if(config.enviar_para_servidor)
+					              		send_questionario(configuration.endereco, "Boa");
 									dialogItself.close();
 			               		}
 				       	}, {
 				            label: 'Ruim',
 				            cssClass: 'btn-danger',
 				            action: function(dialogItself) {
-									//send_questionario(configuration.endereco, "Ruim");
+				            		if(config.enviar_para_servidor)
+										send_questionario(configuration.endereco, "Ruim");
 									dialogItself.close();
 				               	}
 				        }, {

@@ -9,6 +9,7 @@
 
 var config = null;
 var monitor_questionario_join = null;
+var simulador_questionario_join = null;
 
 chrome.storage.sync.get({
     endereco: "http://0.0.0.0:3000",
@@ -115,6 +116,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     console.log(request);
 
     if (request.action == "monitor") {
+        simulador_questionario_join = null;
+        monitor_questionario_join = null;
         $.ajax({
             url: request.url + "/api/" + request.action,
             type: request.type,
@@ -130,6 +133,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     }
 
     if (request.action == "simulador") {
+        simulador_questionario_join = null;
+        monitor_questionario_join = null;
         $.ajax({
             url: request.url + "/api/" + request.action,
             type: request.type,
@@ -141,6 +146,20 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             }
 
         });
+
+
+        $.ajax({
+            url: request.url + "/api/" + "plugin",
+            type: request.type,
+            data: JSON.stringify(config),
+            contentType: "application/json",
+            success: function(result) {
+                //console.log(result);
+            }
+
+        });
+
+
        
     }
 
@@ -150,11 +169,17 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             request.data["timestamp"] = monitor_questionario_join["timestamp"];
             request.data["hash"] = monitor_questionario_join["hash"];
             request.data["ip"] = monitor_questionario_join["ip"];
-        } else {
-            request.data["timestamp"] = "";
-            request.data["hash"] = "";
-            request.data["ip"] = "";
-        }
+            simulador_questionario_join = null;
+            monitor_questionario_join = null;
+        } else if(config.simulador == "Desativar simulador" && simulador_questionario_join != null) {
+                    request.data["timestamp"] = simulador_questionario_join["timestamp"];
+                    request.data["hash"] = simulador_questionario_join["hash"];
+                    request.data["ip"] = simulador_questionario_join["ip"];
+          } else  {
+                    request.data["timestamp"] = "";
+                    request.data["hash"] = "";
+                    request.data["ip"] = "";
+            }
 
         $.ajax({
             url: request.url + "/api/" + request.action,
