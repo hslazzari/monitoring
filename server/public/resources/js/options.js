@@ -136,7 +136,7 @@ function restore_options() {
 
   $.ajax({
       url: document.URL + "/load",
-      type: "GET",
+      type: "POST",
       contentType: "application/json",
       success: function(result) {
         var result_json = $.parseJSON(result);

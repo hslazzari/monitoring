@@ -21,7 +21,7 @@ chrome.storage.sync.get({
     intervalo_minimo_de_stall : 50,
     intervalo_de_monitoramento : 1000,
     enviar_para_servidor : true,
-    estado_stall : {"pos0":"undefined"},
+    estado_stall : {"pos0":undefined},
     resolution_state : {"pos0":"undefined"},
     startup_time : 1000,
     stall_duration : 1000,
@@ -204,20 +204,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             }
 
         });
-
-
-        $.ajax({
-            url: request.url + "/api/" + "plugin",
-            type: request.type,
-            data: JSON.stringify(config),
-            contentType: "application/json",
-            success: function(result) {
-                //console.log(result);
-            }
-
-        });
-
-
        
     }
 

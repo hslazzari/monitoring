@@ -855,7 +855,9 @@ app.post('/api/monitor', function (req, res){
   xw.endDocument();
   
   fs.writeFile('./results/' + results.file_name + '.xml', xw.toString(), function (err) {
-    if (err) throw err;
+    if (err) {
+      console.log("Erro ao salvar");
+    }
   });
   
   var return_object = {};
@@ -1019,7 +1021,6 @@ app.post('/config/save', function(req, res) {
 });
 
 app.post('/config/can_load', function(req, res) {
-  console.log("TENTAR LLOAd");
  if(last_timestamp != -1) {
       var return_object = {};
 
