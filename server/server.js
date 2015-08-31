@@ -760,7 +760,6 @@ app.post('/api/simulador', function (req, res){
 
   var query = connection.query('INSERT INTO video_information_simulador SET ?', info, function(err, result) {
     
-    console.log(result.insertId);
     //stall_position_simulador
     if(req.body.ativar_stall) {
       insert_into_position_simulador(req, result.insertId);
@@ -955,8 +954,7 @@ app.get('/api/simulador', function (req, res){
     if (err)
       console.log(err);
     else {
-      console.log(rows[0])
-
+      
       for(var i = 0; i < rows.length; i++) {
         if(rows[i].ativar_stall =='0')
           rows[i].ativar_stall = "False";
@@ -996,13 +994,207 @@ app.get('/api/simulador', function (req, res){
 
 });
 
+var last_timestamp = -1;
+var last_config = null;
+
 
 // index page 
 app.get('/', function(req, res) {
     res.render('pages/index');
 });
 
+app.get('/config', function(req, res) {
+    res.render('pages/config');
+});
 
+
+app.post('/config/save', function(req, res) {
+    connection.query('SELECT * FROM config LIMIT 1;', function(err, rows, fields) {
+      if (err)
+        console.log(err);
+      else {
+        insert_save_config(req.body, rows.length);
+      }
+    });
+});
+
+app.post('/config/can_load', function(req, res) {
+  console.log("TENTAR LLOAd");
+ if(last_timestamp != -1) {
+      var return_object = {};
+
+      if(last_timestamp > req.body.timestamp)
+        return_object["can_load"] = "true";
+      else
+        return_object["can_load"] = "false";
+
+
+      res.json(JSON.stringify(return_object));
+  } else {
+      connection.query('SELECT * FROM config;', function(err, rows, fields) {
+        if (err)
+          console.log(err);
+        else {
+          var return_object = {};
+          if(rows.length == 0) {
+            return_object["can_load"] = "false";
+          } else {
+            if(rows[0].timestamp > req.body.timestamp) {
+              return_object["can_load"] = "true";
+              last_timestamp = rows[0].timestamp;
+            }
+            else {
+              return_object["can_load"] = "false";
+              last_timestamp = rows[0].timestamp;
+            }
+              
+          }
+
+          res.json(JSON.stringify(return_object));
+          
+        }
+      });
+  }
+  
+});
+
+  
+
+
+app.post('/config/load', function(req, res) {
+    console.log("LOAD")
+    connection.query('SELECT * FROM config;', function(err, rows, fields) {
+      if (err)
+        console.log(err);
+      else {
+        var return_data = rows[0];
+
+        last_timestamp = rows[0].timestamp;
+        
+        return_data["resolution_state"] = {};
+        return_data["estado_stall"] = {};
+
+        connection.query('SELECT * FROM config_resolution_state', function(err, rows, fields) {
+          if (err)
+            console.log(err);
+          else {
+            for(var i = 0; i < rows.length; i++) {
+                return_data["resolution_state"][rows[i].posicao] = rows[i].estado;
+            }  
+
+            connection.query('SELECT * FROM config_estado_stall', function(err, rows, fields) {
+              if (err)
+                console.log(err);
+              else {
+                for(var i = 0; i < rows.length; i++) {
+                    return_data["estado_stall"][rows[i].posicao] = rows[i].estado;
+                } 
+
+                last_config = return_data;
+                res.json(JSON.stringify(return_data));
+
+              }
+            });
+          
+          }
+        });
+      }
+    });
+});
+
+
+
+
+
+
+
+
+
+//  res.json(JSON.stringify(return_object));
+
+
+function insert_save_config(data, length) {
+  var estado_stall = data.estado_stall;
+  var resolution_state = data.resolution_state;
+
+  last_config = data;
+
+  delete data.estado_stall;
+  delete data.resolution_state;
+
+  data.timestamp = Date.now();
+
+  last_timestamp = data.timestamp;
+  last_config["timestamp"] = last_timestamp;
+
+
+  console.log(data);
+
+  if(length == 0) {
+      var query = connection.query('INSERT INTO config SET ?', data, function(err, result) {
+        if(err)
+          console.log(err);
+          
+        console.log("INSERT");
+      });
+
+      var keys = Object.keys(resolution_state);
+
+      for(var i = 0; i < keys.length; i++) {
+        var info = {
+          posicao : keys[i],
+          estado : resolution_state[keys[i]]
+        }
+
+        connection.query('INSERT INTO config_resolution_state SET ?', info, function(err, result) {
+          if(err)
+            console.log(err);
+        });
+      }
+
+
+      var keys2 = Object.keys(estado_stall);
+
+      for(var i = 0; i < keys2.length; i++) {
+        var info = {
+          posicao : keys2[i],
+          estado : estado_stall[keys2[i]]
+        }
+
+        connection.query('INSERT INTO config_estado_stall SET ?', info, function(err, result) {
+          if(err)
+            console.log(err);
+        });
+      }
+
+
+  } else {
+      var query = connection.query('UPDATE config SET ?', data, function(err, result) {
+        if(err)
+          console.log(err);
+          
+        console.log("UPDATE");
+      });
+
+      var keys2 = Object.keys(estado_stall);
+
+      for(var i = 0; i < keys2.length; i++) {
+        var info = {
+          posicao : keys2[i],
+          estado : estado_stall[keys2[i]]
+        }
+
+        connection.query('UPDATE config_estado_stall SET ? WHERE posicao = "' + info.posicao +'"', info, function(err, result) {
+          if(err)
+            console.log(err);
+        });
+      }
+
+  }
+  
+  console.log("Saved config!");
+
+}
 
 
 

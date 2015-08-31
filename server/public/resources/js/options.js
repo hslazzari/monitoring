@@ -53,13 +53,6 @@ if(c.ativar_troca_de_resolucao == "true" || c.ativar_troca_de_resolucao == "1")
   if(c.ativar_troca_de_resolucao == "false" || c.ativar_troca_de_resolucao == "0")
     c.ativar_troca_de_resolucao = false;
 
-
-if(c.receber_do_servidor == "true" || c.receber_do_servidor == "1")
-    c.receber_do_servidor = true;
-  if(c.receber_do_servidor == "false" || c.receber_do_servidor == "0")
-    c.receber_do_servidor = false;
-
-  
   
 
  c.startup_time = Number(c.startup_time);
@@ -69,8 +62,12 @@ if(c.receber_do_servidor == "true" || c.receber_do_servidor == "1")
 
 
 
+
+
 // Saves options to chrome.storage
 function save_options() {
+
+
   var ende = document.getElementById('endereco').value;
   
   var stall_state = {};
@@ -89,9 +86,7 @@ function save_options() {
           resolution_state[name] = estado;
   });
 
-
-
-  chrome.storage.sync.set({
+  var dados = {
     endereco: ende,
     monitorar: $('input[name="monitorar"]:checked').val(),
     questionario: $('input[name="questionario"]:checked').val(),
@@ -114,19 +109,23 @@ function save_options() {
     url_resolucao_4 : $("#url_resolucao_4").val(),
     url_resolucao_5 : $("#url_resolucao_5").val(),
     ativar_troca_de_resolucao : $("#ativar_troca_de_resolucao").prop('checked'),
-    url_page_simulador : $("#url_page_simulador").val(),
-    receber_do_servidor : $("#receber_do_servidor").prop('checked'),
-    timestamp : $("#timestamp_servidor").val()
+    url_page_simulador : $("#url_page_simulador").val()
+  };
 
 
-  }, function() {
-    // Update status to let user know options were saved.
-    var status = document.getElementById('status');
-    status.textContent = 'Configurações salvas.';
-    setTimeout(function() {
-      $("#status").html("&nbsp;");
-    }, 750);
+
+  $.ajax({
+      url: document.URL + "/save",
+      type: "POST",
+      data: JSON.stringify(dados),
+      contentType: "application/json",
+      success: function(result) {
+        //
+      }
+
   });
+
+
 }
 
 // Restores select box and checkbox state using the preferences
@@ -135,118 +134,84 @@ function save_options() {
 
 function restore_options() {
 
+  $.ajax({
+      url: document.URL + "/load",
+      type: "GET",
+      contentType: "application/json",
+      success: function(result) {
+        var result_json = $.parseJSON(result);
+        normalize(result_json);
 
+        document.getElementById('endereco').value = result_json.endereco;
+        if(result_json.monitorar) {
+            $('input[name="monitorar"]')[0].checked = true;
+        } else {
+            $('input[name="monitorar"]')[1].checked = true;
+        }
 
-  chrome.storage.sync.get({
-    endereco: "http://0.0.0.0:3000",
-    monitorar: "true",
-    questionario: "true",
-    relatorio: "false",
-    intervalo_minimo_de_stall : 50,
-    intervalo_de_monitoramento : 1000,
-    enviar_para_servidor : "true",
-    simulador : $("#simulador").text(),
-    estado_stall : {"pos0":"undefined"},
-    resolution_state : {"pos0":"undefined"},
-    startup_time : 1000,
-    stall_duration : 1000,
-    ativar_startup_stall : "true",
-    ativar_stall : "true",
-    show_video_controls : "true",
-    show_questionario_simulador : "true",
-    url_resolucao_1 : "",
-    url_resolucao_2 : "",
-    url_resolucao_3 : "",
-    url_resolucao_4 : "",
-    url_resolucao_5 : "",
-    ativar_troca_de_resolucao : "true",
-    url_page_simulador : "",
-    receber_do_servidor : "true",
-    timestamp : "0"
+        if(result_json.questionario) {
+            $('input[name="questionario"]')[0].checked = true;
+        } else {
+            $('input[name="questionario"]')[1].checked = true;
+        }
 
-  }, function(items) {
+        if(result_json.relatorio) {
+            $('input[name="relatorio"]')[0].checked = true;
+        } else {
+            $('input[name="relatorio"]')[1].checked = true;
+        }
 
-    normalize(items);
-    //document.getElementById('color').value = items.favoriteColor;
-    //document.getElementById('like').checked = items.likesColor;
-    document.getElementById('endereco').value = items.endereco;
-    if(items.monitorar) {
-        $('input[name="monitorar"]')[0].checked = true;
-    } else {
-        $('input[name="monitorar"]')[1].checked = true;
-    }
+        $("#intervalo_de_monitoramento").val(result_json.intervalo_de_monitoramento);
+        $("#intervalo_minimo_de_stall").val(result_json.intervalo_minimo_de_stall);
 
-    if(items.questionario) {
-        $('input[name="questionario"]')[0].checked = true;
-    } else {
-        $('input[name="questionario"]')[1].checked = true;
-    }
+        $("#enviar_para_servidor").prop('checked', result_json.enviar_para_servidor);
 
-    if(items.relatorio) {
-        $('input[name="relatorio"]')[0].checked = true;
-    } else {
-        $('input[name="relatorio"]')[1].checked = true;
-    }
+        $("#ativar_startup_stall").prop('checked', result_json.ativar_startup_stall);
+        
+        $("#ativar_stall").prop('checked', result_json.ativar_stall);
 
-    $("#intervalo_de_monitoramento").val(items.intervalo_de_monitoramento);
-    $("#intervalo_minimo_de_stall").val(items.intervalo_minimo_de_stall);
+        $("#ativar_troca_de_resolucao").prop('checked', result_json.ativar_troca_de_resolucao);
 
-    $("#enviar_para_servidor").prop('checked', items.enviar_para_servidor);
+        $("#show_video_controls").prop('checked', result_json.show_video_controls);
 
-    $("#ativar_startup_stall").prop('checked', items.ativar_startup_stall);
-    
-    $("#ativar_stall").prop('checked', items.ativar_stall);
+        $("#show_questionario_simulador").prop('checked', result_json.show_questionario_simulador);
+        
 
-    $("#ativar_troca_de_resolucao").prop('checked', items.ativar_troca_de_resolucao);
+        $("#simulador").text(result_json.simulador);
+        //console.log(result_json.estado_stall);
+        if(result_json.estado_stall["pos0"] != "undefined") {
+           $(".custom").each(function() {
+              var btn = $(this);
+              var name = btn.attr("id");
+              btn.attr("estado", result_json.estado_stall[name]);
+           });
+        }
 
-    $("#show_video_controls").prop('checked', items.show_video_controls);
+        if(result_json.resolution_state["pos0"] != "undefined") {
+           $(".custom2").each(function() {
+              var btn = $(this);
+              var name = btn.attr("id");
+              btn.attr("estado", result_json.resolution_state[name]);
+           });
+        }
 
-    $("#show_questionario_simulador").prop('checked', items.show_questionario_simulador);
+        $("#url_resolucao_1").val(result_json.url_resolucao_1);
+        $("#url_resolucao_2").val(result_json.url_resolucao_2);
+        $("#url_resolucao_3").val(result_json.url_resolucao_3);
+        $("#url_resolucao_4").val(result_json.url_resolucao_4);
+        $("#url_resolucao_5").val(result_json.url_resolucao_5);
+        
+        $("#startup_time").val(result_json.startup_time);
+        $("#stall_duration").val(result_json.stall_duration);
+        $("#url_page_simulador").val(result_json.url_page_simulador);
 
-    $("#receber_do_servidor").prop('checked', items.receber_do_servidor);
-    
+        refresh_page();
 
-    $("#simulador").text(items.simulador);
-    //console.log(items.estado_stall);
-    if(items.estado_stall["pos0"] != "undefined") {
-       $(".custom").each(function() {
-          var btn = $(this);
-          var name = btn.attr("id");
-          btn.attr("estado", items.estado_stall[name]);
-       });
-    }
-
-    if(items.resolution_state["pos0"] != "undefined") {
-       $(".custom2").each(function() {
-          var btn = $(this);
-          var name = btn.attr("id");
-          btn.attr("estado", items.resolution_state[name]);
-       });
-    }
-
-    
-    $("#url_resolucao_1").val(items.url_resolucao_1);
-    $("#url_resolucao_2").val(items.url_resolucao_2);
-    $("#url_resolucao_3").val(items.url_resolucao_3);
-    $("#url_resolucao_4").val(items.url_resolucao_4);
-    $("#url_resolucao_5").val(items.url_resolucao_5);
-
-
-
-    $("#startup_time").val(items.startup_time);
-
-    $("#stall_duration").val(items.stall_duration);
-
-    $("#url_page_simulador").val(items.url_page_simulador);
-
-    $("#timestamp_servidor").val(items.timestamp);
-
-    refresh_page();
-
-    
-
+      }
 
   });
+
+
 }
 document.addEventListener('DOMContentLoaded', restore_options);
 document.getElementById('save').addEventListener('click',
@@ -357,8 +322,6 @@ function refresh_page() {
 
       $("#endereco_disabled").val($("#endereco").val());
       $("#enviar_para_servidor_disabled").prop('checked', $("#enviar_para_servidor").prop('checked'));
-      $("#receber_do_servidor_disabled").prop('checked', $("#receber_do_servidor").prop('checked'));
-
       
 };
 
@@ -382,7 +345,6 @@ function simulador() {
         $("#titulo_config").text("Configurações - Simulador");
         $("#endereco_disabled").val($("#endereco").val());
         $("#enviar_para_servidor_disabled").prop('checked', $("#enviar_para_servidor").prop('checked'));
-        $("#receber_do_servidor_disabled").prop('checked', $("#receber_do_servidor").prop('checked'));
       } else {
         $("#simulador").text("Ativar simulador");
         $("#simulador").removeClass("btn-danger");
@@ -393,7 +355,6 @@ function simulador() {
         $("#titulo_config").text("Configurações");
         $("#endereco_disabled").val($("#endereco").val());
         $("#enviar_para_servidor_disabled").prop('checked', $("#enviar_para_servidor").prop('checked'));
-        $("#receber_do_servidor_disabled").prop('checked', $("#receber_do_servidor").prop('checked'));
       }
       
 }
@@ -510,143 +471,3 @@ $(".custom2").each(function() {
               }
           })
 });
-
-function retry_load() {
-  setTimeout(
-        function() {
-            chrome.runtime.sendMessage({
-            action: 'get_remote',
-            },  function(responseText) {
-              console.log("LOADDDDD")
-              if(responseText.status == "OK") {
-                  console.log(responseText);
-                  $("#timestamp_servidor").val(responseText.timestamp);
-
-                  normalize(responseText);
-                  //document.getElementById('color').value = responseText.favoriteColor;
-                  //document.getElementById('like').checked = responseText.likesColor;
-                  document.getElementById('endereco').value = responseText.endereco;
-                  if(responseText.monitorar) {
-                      $('input[name="monitorar"]')[0].checked = true;
-                  } else {
-                      $('input[name="monitorar"]')[1].checked = true;
-                  }
-
-                  if(responseText.questionario) {
-                      $('input[name="questionario"]')[0].checked = true;
-                  } else {
-                      $('input[name="questionario"]')[1].checked = true;
-                  }
-
-                  if(responseText.relatorio) {
-                      $('input[name="relatorio"]')[0].checked = true;
-                  } else {
-                      $('input[name="relatorio"]')[1].checked = true;
-                  }
-
-                  $("#intervalo_de_monitoramento").val(responseText.intervalo_de_monitoramento);
-                  $("#intervalo_minimo_de_stall").val(responseText.intervalo_minimo_de_stall);
-
-                  $("#enviar_para_servidor").prop('checked', responseText.enviar_para_servidor);
-
-                  $("#ativar_startup_stall").prop('checked', responseText.ativar_startup_stall);
-                  
-                  $("#ativar_stall").prop('checked', responseText.ativar_stall);
-
-                  $("#ativar_troca_de_resolucao").prop('checked', responseText.ativar_troca_de_resolucao);
-
-                  $("#show_video_controls").prop('checked', responseText.show_video_controls);
-
-                  $("#show_questionario_simulador").prop('checked', responseText.show_questionario_simulador);
-
-                  
-
-                  $("#simulador").text(responseText.simulador);
-                  //console.log(responseText.estado_stall);
-                  if(responseText.estado_stall["pos0"] != "undefined") {
-                     $(".custom").each(function() {
-                        var btn = $(this);
-                        var name = btn.attr("id");
-                        btn.attr("estado", responseText.estado_stall[name]);
-                     });
-                  }
-
-                  if(responseText.resolution_state["pos0"] != "undefined") {
-                     $(".custom2").each(function() {
-                        var btn = $(this);
-                        var name = btn.attr("id");
-                        btn.attr("estado", responseText.resolution_state[name]);
-                     });
-                  }
-
-                  
-                  $("#url_resolucao_1").val(responseText.url_resolucao_1);
-                  $("#url_resolucao_2").val(responseText.url_resolucao_2);
-                  $("#url_resolucao_3").val(responseText.url_resolucao_3);
-                  $("#url_resolucao_4").val(responseText.url_resolucao_4);
-                  $("#url_resolucao_5").val(responseText.url_resolucao_5);
-
-
-
-                  $("#startup_time").val(responseText.startup_time);
-
-                  $("#stall_duration").val(responseText.stall_duration);
-
-                  $("#url_page_simulador").val(responseText.url_page_simulador);
-
-                  $("#timestamp_servidor").val(responseText.timestamp);
-
-                  refresh_page();
-
-                  save_options();
-
-
-
-              } else {
-                retry_load();
-              }
-          });
-        }, 3000);
-}
-
-
-
-setInterval(function() {
-  console.log("INIT LOAD");
-  if($("#receber_do_servidor").prop('checked')) {
-    chrome.runtime.sendMessage({
-      action: 'load',
-      url: "http://0.0.0.0:3000",
-      type: "POST",
-      data: {timestamp:$("#timestamp_servidor").val()}
-      },  function(responseText) {
-
-        
-    });
-
-    
-    retry_load();
-
-  
-  }
-  
-
-}, 30000);
-
-/*
-
-chrome.runtime.sendMessage({
-  action: 'load',
-  url: "http://0.0.0.0:3000",
-  type: "POST",
-  data: {timestamp:"0"}
-  },  function(responseText) {
-
-});
-
-
- 
-
-
-
-*/

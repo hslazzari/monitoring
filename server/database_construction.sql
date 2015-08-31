@@ -71,6 +71,101 @@ LOCK TABLES `buffer_interval` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `config`
+--
+
+DROP TABLE IF EXISTS `config`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `config` (
+  `idconfig` int(11) NOT NULL AUTO_INCREMENT,
+  `endereco` varchar(128) DEFAULT NULL,
+  `monitorar` varchar(5) DEFAULT NULL,
+  `questionario` varchar(5) DEFAULT NULL,
+  `relatorio` varchar(5) DEFAULT NULL,
+  `intervalo_minimo_de_stall` int(11) DEFAULT NULL,
+  `intervalo_de_monitoramento` int(11) DEFAULT NULL,
+  `enviar_para_servidor` varchar(5) DEFAULT NULL,
+  `simulador` varchar(45) DEFAULT NULL,
+  `startup_time` int(11) DEFAULT NULL,
+  `stall_duration` int(11) DEFAULT NULL,
+  `ativar_startup_stall` varchar(5) DEFAULT NULL,
+  `ativar_stall` varchar(5) DEFAULT NULL,
+  `show_video_controls` varchar(5) DEFAULT NULL,
+  `show_questionario_simulador` varchar(5) DEFAULT NULL,
+  `url_resolucao_1` varchar(256) DEFAULT NULL,
+  `url_resolucao_2` varchar(256) DEFAULT NULL,
+  `url_resolucao_3` varchar(256) DEFAULT NULL,
+  `url_resolucao_4` varchar(256) DEFAULT NULL,
+  `url_resolucao_5` varchar(256) DEFAULT NULL,
+  `ativar_troca_de_resolucao` varchar(5) DEFAULT NULL,
+  `url_page_simulador` varchar(256) DEFAULT NULL,
+  `timestamp` bigint(64) DEFAULT NULL,
+  PRIMARY KEY (`idconfig`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `config`
+--
+
+LOCK TABLES `config` WRITE;
+/*!40000 ALTER TABLE `config` DISABLE KEYS */;
+INSERT INTO `config` VALUES (1,'http://0.0.0.0:3001','true','true','false',50,1000,'1','Desativar simulador',1000,1000,'1','1','1','1','','','','','','1','http://200.220.254.84/hobbit-480p.html',1441027673092);
+/*!40000 ALTER TABLE `config` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `config_estado_stall`
+--
+
+DROP TABLE IF EXISTS `config_estado_stall`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `config_estado_stall` (
+  `idconfig_estado_stall` int(11) NOT NULL AUTO_INCREMENT,
+  `posicao` varchar(8) DEFAULT NULL,
+  `estado` varchar(8) DEFAULT NULL,
+  PRIMARY KEY (`idconfig_estado_stall`)
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `config_estado_stall`
+--
+
+LOCK TABLES `config_estado_stall` WRITE;
+/*!40000 ALTER TABLE `config_estado_stall` DISABLE KEYS */;
+INSERT INTO `config_estado_stall` VALUES (1,'pos0','bad'),(2,'pos1','good'),(3,'pos2','good'),(4,'pos3','good'),(5,'pos4','good'),(6,'pos5','good'),(7,'pos6','good'),(8,'pos7','good'),(9,'pos8','good'),(10,'pos9','good'),(11,'pos11','good'),(12,'pos12','good'),(13,'pos13','good'),(14,'pos14','good'),(15,'pos15','good'),(16,'pos16','good'),(17,'pos17','good'),(18,'pos18','good'),(19,'pos19','good'),(20,'pos20','good'),(21,'pos21','good'),(22,'pos22','good'),(23,'pos23','good'),(24,'pos24','good'),(25,'pos25','good'),(26,'pos26','good'),(27,'pos27','good'),(28,'pos28','good'),(29,'pos29','good'),(30,'pos30','good'),(31,'pos31','good'),(32,'pos32','good'),(33,'pos33','good'),(34,'pos34','good'),(35,'pos35','good'),(36,'pos36','good'),(37,'pos37','good'),(38,'pos38','good'),(39,'pos39','good'),(40,'pos40','good'),(41,'pos41','good'),(42,'pos42','good'),(43,'pos43','bad'),(44,'pos44','good'),(45,'pos45','good'),(46,'pos46','good'),(47,'pos47','good'),(48,'pos48','good'),(49,'pos49','good'),(50,'pos50','good'),(51,'pos51','good'),(52,'pos52','good'),(53,'pos53','good'),(54,'pos54','good'),(55,'pos55','good'),(56,'pos56','good'),(57,'pos57','good'),(58,'pos58','good'),(59,'pos59','good'),(60,'pos60','good'),(61,'pos61','good'),(62,'pos62','good'),(63,'pos63','good'),(64,'pos64','good'),(65,'pos65','good'),(66,'pos66','good'),(67,'pos67','good'),(68,'pos68','good'),(69,'pos69','good'),(70,'pos70','good'),(71,'pos71','good'),(72,'pos72','good'),(73,'pos73','good'),(74,'pos74','good'),(75,'pos75','good'),(76,'pos76','good'),(77,'pos77','good'),(78,'pos78','good'),(79,'pos79','good'),(80,'pos80','good'),(81,'pos81','good'),(82,'pos82','good'),(83,'pos83','good'),(84,'pos84','good'),(85,'pos85','good'),(86,'pos86','good'),(87,'pos87','good'),(88,'pos88','good'),(89,'pos89','good'),(90,'pos90','good'),(91,'pos91','good'),(92,'pos92','good'),(93,'pos93','good'),(94,'pos94','good'),(95,'pos95','good'),(96,'pos96','good'),(97,'pos97','good'),(98,'pos98','good'),(99,'pos99','good'),(100,'pos100','good');
+/*!40000 ALTER TABLE `config_estado_stall` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `config_resolution_state`
+--
+
+DROP TABLE IF EXISTS `config_resolution_state`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `config_resolution_state` (
+  `idconfig_resolution_state` int(11) NOT NULL AUTO_INCREMENT,
+  `posicao` varchar(8) DEFAULT NULL,
+  `estado` varchar(8) DEFAULT NULL,
+  PRIMARY KEY (`idconfig_resolution_state`)
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `config_resolution_state`
+--
+
+LOCK TABLES `config_resolution_state` WRITE;
+/*!40000 ALTER TABLE `config_resolution_state` DISABLE KEYS */;
+INSERT INTO `config_resolution_state` VALUES (1,'pos0','3'),(2,'pos1','6'),(3,'pos2','6'),(4,'pos3','6'),(5,'pos4','6'),(6,'pos5','6'),(7,'pos6','6'),(8,'pos7','6'),(9,'pos8','6'),(10,'pos9','6'),(11,'pos11','6'),(12,'pos12','6'),(13,'pos13','6'),(14,'pos14','6'),(15,'pos15','6'),(16,'pos16','6'),(17,'pos17','6'),(18,'pos18','6'),(19,'pos19','6'),(20,'pos20','6'),(21,'pos21','6'),(22,'pos22','6'),(23,'pos23','6'),(24,'pos24','6'),(25,'pos25','6'),(26,'pos26','6'),(27,'pos27','6'),(28,'pos28','6'),(29,'pos29','6'),(30,'pos30','6'),(31,'pos31','6'),(32,'pos32','6'),(33,'pos33','6'),(34,'pos34','6'),(35,'pos35','6'),(36,'pos36','6'),(37,'pos37','6'),(38,'pos38','6'),(39,'pos39','6'),(40,'pos40','6'),(41,'pos41','6'),(42,'pos42','6'),(43,'pos43','6'),(44,'pos44','6'),(45,'pos45','6'),(46,'pos46','6'),(47,'pos47','6'),(48,'pos48','6'),(49,'pos49','6'),(50,'pos50','6'),(51,'pos51','6'),(52,'pos52','6'),(53,'pos53','6'),(54,'pos54','6'),(55,'pos55','6'),(56,'pos56','6'),(57,'pos57','6'),(58,'pos58','6'),(59,'pos59','6'),(60,'pos60','6'),(61,'pos61','6'),(62,'pos62','6'),(63,'pos63','6'),(64,'pos64','6'),(65,'pos65','6'),(66,'pos66','6'),(67,'pos67','6'),(68,'pos68','6'),(69,'pos69','6'),(70,'pos70','6'),(71,'pos71','6'),(72,'pos72','6'),(73,'pos73','6'),(74,'pos74','6'),(75,'pos75','6'),(76,'pos76','6'),(77,'pos77','6'),(78,'pos78','6'),(79,'pos79','6'),(80,'pos80','6'),(81,'pos81','6'),(82,'pos82','6'),(83,'pos83','6'),(84,'pos84','6'),(85,'pos85','6'),(86,'pos86','6'),(87,'pos87','6'),(88,'pos88','6'),(89,'pos89','6'),(90,'pos90','6'),(91,'pos91','6'),(92,'pos92','6'),(93,'pos93','6'),(94,'pos94','6'),(95,'pos95','6'),(96,'pos96','6'),(97,'pos97','6'),(98,'pos98','6'),(99,'pos99','6'),(100,'pos100','6');
+/*!40000 ALTER TABLE `config_resolution_state` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `frame_per_second`
 --
 
@@ -535,4 +630,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-08-27 11:03:33
+-- Dump completed on 2015-08-31 10:37:22

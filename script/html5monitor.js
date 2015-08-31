@@ -1,72 +1,71 @@
+
 function normalize(c) {
-	if(c.monitorar == "true")
-		c.monitorar = true;
-	if(c.monitorar == "false")
-		c.monitorar = false;
+  if(c.monitorar == "true" || c.monitorar == "1") 
+    c.monitorar = true;
+  if(c.monitorar == "false" || c.monitorar == "0")
+    c.monitorar = false;
 
-	if(c.questionario == "true")
-		c.questionario = true;
-	if(c.questionario == "false")
-		c.questionario = false;
+  if(c.questionario == "true" || c.questionario == "1")
+    c.questionario = true;
+  if(c.questionario == "false" || c.questionario == "0")
+    c.questionario = false;
 
-	if(c.relatorio == "true")
-		c.relatorio = true;
-	if(c.relatorio == "false")
-		c.relatorio = false;
+  if(c.relatorio == "true" || c.relatorio == "1")
+    c.relatorio = true;
+  if(c.relatorio == "false" || c.relatorio == "0")
+    c.relatorio = false;
 
-	console.log(c);
-
-	c.intervalo_minimo_de_stall = Number(c.intervalo_minimo_de_stall);
-    c.intervalo_de_monitoramento = Number(c.intervalo_de_monitoramento);
+  c.intervalo_minimo_de_stall = Number(c.intervalo_minimo_de_stall);
+  c.intervalo_de_monitoramento = Number(c.intervalo_de_monitoramento);
 
 
-    if(c.enviar_para_servidor == "true")
-    	c.enviar_para_servidor = true;
-    if(c.enviar_para_servidor == "false")
-    	c.enviar_para_servidor = false;
-
-     c.startup_time = Number(c.startup_time);
-     c.stall_duration = Number(c.stall_duration);
-
-
-
-  if(c.ativar_startup_stall == "true")
+  if(c.ativar_startup_stall == "true" || c.ativar_startup_stall == "1")
     c.ativar_startup_stall = true;
-  if(c.ativar_startup_stall == "false")
+  if(c.ativar_startup_stall == "false" || c.ativar_startup_stall == "0")
     c.ativar_startup_stall = false;
 
-  if(c.ativar_stall == "true")
+  if(c.ativar_stall == "true" || c.ativar_stall == "1")
     c.ativar_stall = true;
-  if(c.ativar_stall == "false")
+  if(c.ativar_stall == "false" || c.ativar_stall == "0")
     c.ativar_stall = false;
 
-  if(c.show_video_controls == "true")
+
+
+    
+
+  if(c.enviar_para_servidor == "true" || c.enviar_para_servidor == "1")
+    c.enviar_para_servidor = true;
+  if(c.enviar_para_servidor == "false" || c.enviar_para_servidor == "0")
+    c.enviar_para_servidor = false;
+
+ if(c.show_video_controls == "true" || c.show_video_controls == "1")
     c.show_video_controls = true;
-  if(c.show_video_controls == "false")
+  if(c.show_video_controls == "false" || c.show_video_controls == "0")
     c.show_video_controls = false;
 
-  
- if(c.show_questionario_simulador == "true")
+ if(c.show_questionario_simulador == "true" || c.show_questionario_simulador == "1")
     c.show_questionario_simulador = true;
-  if(c.show_questionario_simulador == "false")
+  if(c.show_questionario_simulador == "false" || c.show_questionario_simulador == "0")
     c.show_questionario_simulador = false;
 
-
-if(c.ativar_troca_de_resolucao == "true")
+if(c.ativar_troca_de_resolucao == "true" || c.ativar_troca_de_resolucao == "1")
     c.ativar_troca_de_resolucao = true;
-  if(c.ativar_troca_de_resolucao == "false")
+  if(c.ativar_troca_de_resolucao == "false" || c.ativar_troca_de_resolucao == "0")
     c.ativar_troca_de_resolucao = false;
 
+  if(c.receber_do_servidor == "true" || c.receber_do_servidor == "1")
+    c.receber_do_servidor = true;
+  if(c.receber_do_servidor == "false" || c.receber_do_servidor == "0")
+    c.receber_do_servidor = false;
 
 
-
-    console.log(c);
+ c.startup_time = Number(c.startup_time);
+ c.stall_duration = Number(c.stall_duration);
 
 }
 
 var config = null;
 var $link = null;
-
 
 
 function send_simulador(end, config, current_source, video_duration) {
@@ -88,6 +87,8 @@ function send_simulador(end, config, current_source, video_duration) {
 	return_object["resolution_state"] = config.resolution_state;
 	return_object["estado_stall"] = config.estado_stall;
 	return_object["video_duration"] = video_duration;
+
+
 
 	chrome.runtime.sendMessage({
 		action: 'simulador',
