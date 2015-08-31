@@ -358,7 +358,7 @@ $(document).ready(function() {
 				console.log("Não monitorar");
 			}
 
-			if(config.simulador == "Desativar simulador") {
+			if(config.monitorar == true && config.simulador == "Desativar simulador") {
 				start_simulator(config);
 			}
 		}

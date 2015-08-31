@@ -220,9 +220,11 @@ document.getElementById('save').addEventListener('click',
 
 function refresh_page() {
       if($('input[name="monitorar"]:checked').val() == "true") {
-          $("#monitorando").css('visibility','visible');
+          //$("#monitorando").css('visibility','visible');
+          $("#monitorando").show();
       } else {
-          $("#monitorando").css('visibility','hidden');
+         // $("#monitorando").css('visibility','hidden');
+         $("#monitorando").hide();
       }
 
        console.log($("#simulador").text());

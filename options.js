@@ -89,6 +89,7 @@ function save_options() {
           resolution_state[name] = estado;
   });
 
+  $("#timestamp_servidor").val(Number($("#timestamp_servidor").val()) - 1);
 
 
   chrome.storage.sync.set({
@@ -128,6 +129,70 @@ function save_options() {
     }, 750);
   });
 }
+
+
+
+// Saves options to chrome.storage
+function old_save_options() {
+  var ende = document.getElementById('endereco').value;
+  
+  var stall_state = {};
+  $(".custom").each(function() {
+          var btn = $(this);
+          var name = btn.attr("id");
+          var estado = btn.attr("estado");
+          stall_state[name] = estado;
+  });
+
+  var resolution_state = {};
+  $(".custom2").each(function() {
+          var btn = $(this);
+          var name = btn.attr("id");
+          var estado = btn.attr("estado");
+          resolution_state[name] = estado;
+  });
+
+
+
+  chrome.storage.sync.set({
+    endereco: ende,
+    monitorar: $('input[name="monitorar"]:checked').val(),
+    questionario: $('input[name="questionario"]:checked').val(),
+    relatorio: $('input[name="relatorio"]:checked').val(),
+    intervalo_minimo_de_stall: $("#intervalo_minimo_de_stall").val(),
+    intervalo_de_monitoramento : $("#intervalo_de_monitoramento").val(),
+    enviar_para_servidor : $("#enviar_para_servidor").prop('checked'),
+    simulador : $("#simulador").text(),
+    estado_stall : stall_state ,
+    'resolution_state': resolution_state, 
+    startup_time : $("#startup_time").val(),
+    stall_duration : $("#stall_duration").val(),
+    ativar_startup_stall : $("#ativar_startup_stall").prop('checked'),
+    ativar_stall : $("#ativar_stall").prop('checked'),
+    show_video_controls : $("#show_video_controls").prop('checked'),
+    show_questionario_simulador : $("#show_questionario_simulador").prop('checked'),
+    url_resolucao_1 : $("#url_resolucao_1").val(),
+    url_resolucao_2 : $("#url_resolucao_2").val(),
+    url_resolucao_3 : $("#url_resolucao_3").val(),
+    url_resolucao_4 : $("#url_resolucao_4").val(),
+    url_resolucao_5 : $("#url_resolucao_5").val(),
+    ativar_troca_de_resolucao : $("#ativar_troca_de_resolucao").prop('checked'),
+    url_page_simulador : $("#url_page_simulador").val(),
+    receber_do_servidor : $("#receber_do_servidor").prop('checked'),
+    timestamp : $("#timestamp_servidor").val()
+
+
+  }, function() {
+    // Update status to let user know options were saved.
+    var status = document.getElementById('status');
+    status.textContent = 'Configurações salvas.';
+    setTimeout(function() {
+      $("#status").html("&nbsp;");
+    }, 750);
+  });
+}
+
+
 
 // Restores select box and checkbox state using the preferences
 // stored in chrome.storage.
@@ -255,9 +320,9 @@ document.getElementById('save').addEventListener('click',
 
 function refresh_page() {
       if($('input[name="monitorar"]:checked').val() == "true") {
-          $("#monitorando").css('visibility','visible');
+          $("#monitorando").show();
       } else {
-          $("#monitorando").css('visibility','hidden');
+          $("#monitorando").hide();
       }
 
        console.log($("#simulador").text());
@@ -598,7 +663,7 @@ function retry_load() {
 
                   refresh_page();
 
-                  save_options();
+                  old_save_options();
 
 
 
