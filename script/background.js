@@ -174,8 +174,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 
     if (request.action == "monitor") {
-        simulador_questionario_join = null;
-        monitor_questionario_join = null;
         $.ajax({
             url: request.url + "/api/" + request.action,
             type: request.type,
@@ -191,8 +189,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     }
 
     if (request.action == "simulador") {
-        simulador_questionario_join = null;
-        monitor_questionario_join = null;
         $.ajax({
             url: request.url + "/api/" + request.action,
             type: request.type,
@@ -213,8 +209,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             request.data["timestamp"] = monitor_questionario_join["timestamp"];
             request.data["hash"] = monitor_questionario_join["hash"];
             request.data["ip"] = monitor_questionario_join["ip"];
-            simulador_questionario_join = null;
-            monitor_questionario_join = null;
         } else if(config.simulador == "Desativar simulador" && simulador_questionario_join != null) {
                     request.data["timestamp"] = simulador_questionario_join["timestamp"];
                     request.data["hash"] = simulador_questionario_join["hash"];
@@ -231,7 +225,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             data: JSON.stringify(request.data),
             contentType: "application/json",
             success: function(result) {
-               
+               simulador_questionario_join = null;
+               monitor_questionario_join = null;
             }
         });
         

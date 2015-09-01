@@ -42,7 +42,7 @@
                       "script/jquery-2.1.1.min.js",
                       "script/background.js"
                    ],
-        "persistent": false
+        "persistent": true
   },
 
   "web_accessible_resources" : [

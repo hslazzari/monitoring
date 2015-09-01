@@ -65,7 +65,7 @@ var exec = require('child_process').exec;
     
 app.get('/api/monitor', function (req, res) {
   connection.query(
-    ' SELECT distinct questionario.opinion, questionario.ip, video_information.video_information_id, video_information.start_timestamp, video_information.video_duration, video_information.total_stall_length, video_start_time' +
+    ' SELECT questionario.opinion, questionario.ip, video_information.video_information_id, video_information.start_timestamp, video_information.video_duration, video_information.total_stall_length, video_start_time' +
     ' FROM questionario' +
     ' INNER JOIN  video_information' + 
     ' ON questionario.ip=video_information.ip AND questionario.hash =video_information.hash AND questionario.timestamp = video_information.start_timestamp;'
@@ -696,39 +696,7 @@ function insert_into_buffer_interval(req, video_id) {
 
 app.post('/api/simulador', function (req, res){
   console.log("Simulador info received");
- /*
-  var results = insert_into_video_information(req);
-  var video_id = results.video_id;
-
-  insert_into_video_source(req, video_id);
-  insert_into_volume_state(req, video_id);
-  insert_into_video_bytes_decoded_per_second(req, video_id);
-  insert_into_audio_bytes_decoded_per_second(req, video_id);
-  insert_into_time_in_buffer(req, video_id);
-  insert_into_skip_play(req, video_id);
-  insert_into_played_interval(req, video_id);
-  insert_into_playback_quality(req, video_id);
-  insert_into_network_state(req, video_id);
-  insert_into_mute_state(req, video_id);
-  insert_into_length_of_stall(req, video_id);
-  insert_into_frame_per_second(req, video_id);
-  insert_into_buffer_interval(req, video_id);
-  xw.endDocument();
-  
-  fs.writeFile('./results/' + results.file_name + '.xml', xw.toString(), function (err) {
-    if (err) throw err;
-  });
-  
-  var return_object = {};
-  return_object["timestamp"] = results.info.start_timestamp;
-  return_object["hash"] = results.info.hash;
-  return_object["ip"] = results.info.ip;
-
-  console.log("Monitoring info saved");
-
-  res.json(JSON.stringify(return_object));
-
-*/
+ 
 
   var info  = { 
               ip: req.ip, 
@@ -750,28 +718,25 @@ app.post('/api/simulador', function (req, res){
               url_resolucao_6: req.body.url_resolucao_6,
   };
 
-  //return_object["resolution_state"] = config.resolution_state;
-  //sreturn_object["estado_stall"] = config.estado_stall;
-
-
-
 
   
 
   var query = connection.query('INSERT INTO video_information_simulador SET ?', info, function(err, result) {
-    
-    //stall_position_simulador
-    if(req.body.ativar_stall) {
-      insert_into_position_simulador(req, result.insertId);
-    }
-      
-    //troca_de_resolucao_simulador
-    if(req.body.ativar_troca_de_resolucao) {
-      insert_into_troca_de_resolucao_simulador(req, result.insertId);
-    }
-
     if(err)
       console.log(err);
+    else {
+          //stall_position_simulador
+        if(req.body.ativar_stall) {
+          insert_into_position_simulador(req, result.insertId);
+        }
+          
+        //troca_de_resolucao_simulador
+        if(req.body.ativar_troca_de_resolucao) {
+          insert_into_troca_de_resolucao_simulador(req, result.insertId);
+        }
+
+    }
+    
   });
 
 
@@ -780,6 +745,7 @@ app.post('/api/simulador', function (req, res){
   return_object["hash"] = info.hash;
   return_object["ip"] = info.ip;
   
+  console.log("return hash: " + return_object["hash"]);
   res.json(JSON.stringify(return_object));
 
 });
@@ -882,7 +848,11 @@ app.post('/api/monitor', function (req, res){
 
 app.post('/api/questionario', function (req, res){
   console.log("received questionario");
-  insert_into_questionario(req);
+  var return_object = insert_into_questionario(req);
+
+
+  res.json(JSON.stringify(return_object));
+
 });
 
 
@@ -894,6 +864,8 @@ app.post('/api/questionario', function (req, res){
 */
 
 function insert_into_questionario(req) {
+
+
  
   var info  = { 
     ip: req.body.ip, 
@@ -910,8 +882,11 @@ function insert_into_questionario(req) {
     tempo : req.body.tempo
   };
 
+  console.log("hash: " + info.hash);
+
   if(info.hash == "") {
     info.hash = randomString(64, "aA#");
+    console.log(" NEw hash: " + info.hash);
   }
 
   if(info.ip == "") {
@@ -925,9 +900,14 @@ function insert_into_questionario(req) {
   var query = connection.query('INSERT INTO questionario SET ?', info, function(err, result) {
   if(err)
     console.log(err);
+  else 
+    console.log(result);
   });
 
   console.log("Saved questionario!");
+  var return_object = {status : 'OK'};
+
+  return return_object;
 }
 
 
@@ -949,7 +929,7 @@ function randomString(length, chars) {
 
 
 app.get('/api/simulador', function (req, res){
-  connection.query('SELECT distinct questionario.opinion, questionario.ip, video_information_simulador.ativar_stall, video_information_simulador.ativar_startup_stall, video_information_simulador.ativar_troca_de_resolucao'+
+  connection.query('SELECT  questionario.opinion, questionario.ip, video_information_simulador.start_timestamp, video_information_simulador.url_resolucao_6, video_information_simulador.ativar_stall, video_information_simulador.ativar_startup_stall, video_information_simulador.ativar_troca_de_resolucao'+
     ' FROM questionario' +
     ' INNER JOIN  video_information_simulador' +
     ' ON questionario.ip=video_information_simulador.ip AND questionario.hash =video_information_simulador.hash AND questionario.timestamp = video_information_simulador.start_timestamp;', function(err, rows, fields) {
@@ -972,6 +952,16 @@ app.get('/api/simulador', function (req, res){
           rows[i].ativar_troca_de_resolucao = "False";
         else
           rows[i].ativar_troca_de_resolucao = "True";
+
+        var date = new Date(Number(rows[i].start_timestamp));
+        var hours = date.getHours();
+        var minutes = "0" + date.getMinutes();
+        var seconds = "0" + date.getSeconds();
+        var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+        
+        rows[i].start_timestamp = formattedTime;
+
+
         
       }
 

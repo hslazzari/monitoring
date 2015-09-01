@@ -23,6 +23,8 @@
             <th>Ativar stall simulado</th>
             <th>Ativar tempo de Startup</th>
             <th>Ativar Troca de Resolução</th>
+            <th>Horário da Medição</th>
+            <th>URL</th>
             </tr>
         </thead>
 
@@ -34,6 +36,8 @@
                 <td> <%= result.ativar_stall %> </td>
                 <td> <%= result.ativar_startup_stall %> </td>
                 <td> <%= result.ativar_troca_de_resolucao %> </td>
+                <td> <%= result.start_timestamp %> </td>
+                <td> <%= result.url_resolucao_6 %> </td>
             </tr>
           <% }); %>
         </tbody>

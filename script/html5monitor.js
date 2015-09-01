@@ -342,7 +342,7 @@ $(document).ready(function() {
 
     wait_tree_seconds = setInterval(function() {
 		
-		if((counter == 200 || document.getElementsByTagName('video').length > 0) && (config != null)) {
+		if((counter == 200 || document.getElementsByTagName('video').length > 0) && (config != null) && (document.getElementsByTagName('video').length > 0 && isNaN(document.getElementsByTagName('video')[0].duration) == false)) {
 			clearInterval(wait_tree_seconds);
 			
 			normalize(config);
@@ -405,6 +405,9 @@ function start_simulator(configuration) {
 		var video_element = document.getElementsByTagName('video')[0];
 		
 		var simulador = new Simulador(video_element);
+
+		console.log(video_element.duration);
+		console.log("OI");
 
 		if(config.show_questionario_simulador && config.enviar_para_servidor) {
 			console.log("ENVIAR");
