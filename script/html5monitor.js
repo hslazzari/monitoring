@@ -1,3 +1,7 @@
+var monitor;
+var simulador;
+var config2;
+
 
 function normalize(c) {
   if(c.monitorar == "true" || c.monitorar == "1") 
@@ -351,15 +355,16 @@ $(document).ready(function() {
 
 			
 			
-			if(config.monitorar == true && config.simulador == "Ativar simulador") {
+			if(config.monitorar == true && config.simulador == "Ativar simulador" && document.URL.indexOf("tests") == -1) {
 				start_monitor(config);
 			}
 			else {
 				console.log("Não monitorar");
 			}
 
-			if(config.monitorar == true && config.simulador == "Desativar simulador") {
+			if(config.monitorar == true && config.simulador == "Desativar simulador" && document.URL.indexOf("tests") == -1) {
 				start_simulator(config);
+				start_monitor(config);
 			}
 		}
 		else {
@@ -404,13 +409,11 @@ function start_simulator(configuration) {
 		var url = document.URL;
 		var video_element = document.getElementsByTagName('video')[0];
 		
-		var simulador = new Simulador(video_element);
+		simulador = new Simulador(video_element);
 
 		console.log(video_element.duration);
-		console.log("OI");
-
+		
 		if(config.show_questionario_simulador && config.enviar_para_servidor) {
-			console.log("ENVIAR");
 			send_simulador(configuration.endereco, configuration, video_element.currentSrc, video_element.duration);
 		}
 
@@ -445,42 +448,42 @@ function start_simulator(configuration) {
 			simulador.start_stall_creator();
 		}
 		
-		
-			document.getElementsByTagName('video')[0].addEventListener("ended", function() {
-				if(config.show_questionario_simulador) {
-					simulador.stop_all_simulation();
-					BootstrapDialog.show( {
-			   			title: "Qualidade de experiência - Simulada",
-				   		message: $('<div></div>').load(chrome.extension.getURL("remote.html")),
-				   		closable: true,
-				    	closeByBackdrop: false,
-				    	closeByKeyboard: false,
-				   	 buttons: [{
-				       	label: 'Boa',
-				        cssClass: 'btn-primary',
-				        action: function(dialogItself) {
-				        			if(config.enviar_para_servidor)
-					              		send_questionario(configuration.endereco, "Boa");
-									dialogItself.close();
-			               		}
-				       	}, {
-				            label: 'Ruim',
-				            cssClass: 'btn-danger',
-				            action: function(dialogItself) {
-				            		if(config.enviar_para_servidor)
-										send_questionario(configuration.endereco, "Ruim");
-									dialogItself.close();
-				               	}
-				        }, {
-				            label: 'Cancelar',
-				            action: function(dialogItself) {
-						                dialogItself.close();
-				                	}
-				        }]
-				    });
-				}
-			});
-		
+			if(document.URL.indexOf("tests") == -1) {
+				document.getElementsByTagName('video')[0].addEventListener("ended", function() {
+					if(config.show_questionario_simulador) {
+						simulador.stop_all_simulation();
+						BootstrapDialog.show( {
+				   			title: "Qualidade de experiência - Simulada",
+					   		message: $('<div></div>').load(chrome.extension.getURL("remote.html")),
+					   		closable: true,
+					    	closeByBackdrop: false,
+					    	closeByKeyboard: false,
+					   	 buttons: [{
+					       	label: 'Boa',
+					        cssClass: 'btn-primary',
+					        action: function(dialogItself) {
+					        			if(config.enviar_para_servidor)
+						              		send_questionario(configuration.endereco, "Boa");
+										dialogItself.close();
+				               		}
+					       	}, {
+					            label: 'Ruim',
+					            cssClass: 'btn-danger',
+					            action: function(dialogItself) {
+					            		if(config.enviar_para_servidor)
+											send_questionario(configuration.endereco, "Ruim");
+										dialogItself.close();
+					               	}
+					        }, {
+					            label: 'Cancelar',
+					            action: function(dialogItself) {
+							                dialogItself.close();
+					                	}
+					        }]
+					    });
+					}
+				});
+			}
 		
 
 		
@@ -501,7 +504,7 @@ function start_monitor(configuration) {
 		var url = document.URL;
 		var video_element = document.getElementsByTagName('video')[0];
 		var time_interval = configuration.intervalo_de_monitoramento; //In miliseconds
-		var monitor = new Monitor(video_element, url);
+		monitor = new Monitor(video_element, url);
 
 		var uuid = GetURLParameter('uuid');
 		if(uuid != null && uuid.length > 0)
@@ -531,80 +534,537 @@ function start_monitor(configuration) {
 		monitor.start_all_monitoring(time_interval, configuration.intervalo_minimo_de_stall);
 		
 		
-
-		document.getElementsByTagName('video')[0].addEventListener("ended", function() {
-			monitor.stop_all_monitoring();
-			console.log(monitor.json());
-			if(configuration.relatorio) {
-				local_save(monitor.json());
-			}
-			var dt = monitor.json();
-			
-			if(send_to_server && !has_already_sent_to_server) {
-				has_already_sent_to_server = true;
-				chrome.runtime.sendMessage({
-			    action: 'monitor',
-			    url: configuration.endereco,
-				type: "POST",
-				data: dt,
-				},  function(responseText) {
-			   			/*Callback function to deal with the response*/
-			    	});
-			}
-		
-				
-				
-
-				if(configuration.questionario) {
-					BootstrapDialog.show({
-		    			title: "Qualidade de experiência",
-		    			message: $('<div></div>').load(chrome.extension.getURL("remote.html")),
-		    			closable: true,
-			            closeByBackdrop: false,
-			            closeByKeyboard: false,
-			            buttons: [{
-			            	label: 'Boa',
-			                cssClass: 'btn-primary',
-			                action: function(dialogItself){
-			                	if(configuration.relatorio) {
-									local_save_questionario(monitor.json().start_timestamp, "Boa");
-								}
-								if(configuration.enviar_para_servidor) {
-									send_questionario(configuration.endereco, "Boa");
-								}
-								dialogItself.close();
-			                }
-			            }, {
-			                label: 'Ruim',
-			                cssClass: 'btn-danger',
-			                action: function(dialogItself){
-								if(configuration.relatorio) {
-									local_save_questionario(monitor.json().start_timestamp, "Ruim");
-								}
-								if(configuration.enviar_para_servidor) {
-									send_questionario(configuration.endereco, "Ruim");
-								}
-								dialogItself.close();
-			                }
-			            }, {
-			                label: 'Cancelar',
-			                action: function(dialogItself){
-			                    dialogItself.close();
-			                }
-			            }]
-			        });
+		if(document.URL.indexOf("tests") == -1) {
+			document.getElementsByTagName('video')[0].addEventListener("ended", function() {
+				monitor.stop_all_monitoring();
+				console.log(monitor.json());
+				if(configuration.relatorio) {
+					local_save(monitor.json());
 				}
-
-
+				var dt = monitor.json();
+				
+				if(send_to_server && !has_already_sent_to_server) {
+					has_already_sent_to_server = true;
+					chrome.runtime.sendMessage({
+				    action: 'monitor',
+				    url: configuration.endereco,
+					type: "POST",
+					data: dt,
+					},  function(responseText) {
+				   			/*Callback function to deal with the response*/
+				    	});
+				}
 			
-	    		
-			
+					
+					
 
-		});
+					if(configuration.questionario) {
+						BootstrapDialog.show({
+			    			title: "Qualidade de experiência",
+			    			message: $('<div></div>').load(chrome.extension.getURL("remote.html")),
+			    			closable: true,
+				            closeByBackdrop: false,
+				            closeByKeyboard: false,
+				            buttons: [{
+				            	label: 'Boa',
+				                cssClass: 'btn-primary',
+				                action: function(dialogItself){
+				                	if(configuration.relatorio) {
+										local_save_questionario(monitor.json().start_timestamp, "Boa");
+									}
+									if(configuration.enviar_para_servidor) {
+										send_questionario(configuration.endereco, "Boa");
+									}
+									dialogItself.close();
+				                }
+				            }, {
+				                label: 'Ruim',
+				                cssClass: 'btn-danger',
+				                action: function(dialogItself){
+									if(configuration.relatorio) {
+										local_save_questionario(monitor.json().start_timestamp, "Ruim");
+									}
+									if(configuration.enviar_para_servidor) {
+										send_questionario(configuration.endereco, "Ruim");
+									}
+									dialogItself.close();
+				                }
+				            }, {
+				                label: 'Cancelar',
+				                action: function(dialogItself){
+				                    dialogItself.close();
+				                }
+				            }]
+				        });
+					}
+			});	
+		}
+		
 
 	}
 }
 
 });
 
+
+
+if(document.URL.indexOf("tests") > -1) {
+	var video_element = document.getElementsByTagName('video')[0];
+	var avaliados = 1;
+
+
+	var source_o = video_element.currentSrc;
+
+	video_element.pause();
+
+	var counter_start = 9;
+
+	var dialogIt = BootstrapDialog.show( {
+			title: "Configuração dos testes",
+			message: "O teste iniciará em 10 segundos!",
+		   	closable: true,
+		    closeByBackdrop: false,
+		    closeByKeyboard: false
+			
+	});
+
+	var timer_5_seconds = setInterval(function() {
+		if(counter_start > 0) {
+			$('.bootstrap-dialog-message').html("O teste iniciará em " + counter_start + " segundos!");
+			counter_start--;
+		} else {
+			clearInterval(timer_5_seconds);
+			dialogIt.close();
+			var url = document.URL;
+			var time_interval = config2.intervalo_de_monitoramento; //In miliseconds
+			monitor = new Monitor(video_element, url);
+			console.log(config2);
+			monitor.start_all_monitoring(time_interval, config2.intervalo_minimo_de_stall);
+			simulador = new Simulador(video_element);
+			video_element.controls = false;
+			
+			if(config2.ativar_startup_stall) {
+								setTimeout(function() {
+									video_element.play();
+								}, config2.startup_time);
+			} else
+				video_element.play();
+
+			
+			if(config2.ativar_troca_de_resolucao && url == config2.url_page_simulador) {
+				simulador.add_url_to_change("1", config.url_resolucao_1.trim());
+				simulador.add_url_to_change("2", config.url_resolucao_2.trim());
+				simulador.add_url_to_change("3", config.url_resolucao_3.trim());
+				simulador.add_url_to_change("4", config.url_resolucao_4.trim());
+				simulador.add_url_to_change("5", config.url_resolucao_5.trim());
+			
+				simulador.add_change_at_point(config2.resolution_state);
+				simulador.start_change_creator();
+			}
+			
+			
+
+			if(config2.ativar_stall) {
+				simulador.add_stall_duration(config2.stall_duration);
+				simulador.add_stalls_at_point(config2.estado_stall);
+				simulador.start_stall_creator();
+			}
+
+
+			
+
+		}
+		
+	}, 1000);
+
+
+
+
+	
+
+
+
+	setTimeout(function() {
+		
+
+		chrome.runtime.sendMessage({
+				action: 'load',
+				data : {'perfil':avaliados},
+				url: config.endereco,
+				type: "POST",
+			}, function(responseText) {
+					
+				}
+			);
+
+
+
+		//Start monitoring
+	
+		
+
+	}, 2000);
+
+
+
+	setTimeout(function() {
+		
+
+		chrome.runtime.sendMessage({
+			action: 'create_link',
+			url: config.endereco,
+			type: "POST",
+		}, function(responseText) {
+				
+			}
+		);
+
+
+
+		//Start monitoring
+	
+		
+
+	}, 3000);
+
+		
+
+
+
+
+		
+
+
+
+	setTimeout(function() {
+			
+			chrome.runtime.sendMessage({
+				action: 'get_remote',
+				url: config.endereco,
+				type: "POST",
+			}, function(responseText) {
+				console.log(responseText);
+					config2 = responseText;
+				}
+			);
+	}, 4000);
+
+
+
+
+	
+
+
+
+	//Load config avaliados 1
+
+
+
+
+
+	$("#avaliar").click(function() {
+
+		//simulador.stop_all_simulation();
+		
+
+
+
+		//Enviar dados da simulacao
+
+		monitor.stop_all_monitoring();
+		simulador.stop_all_simulation();
+
+
+
+
+		var dt = monitor.json();
+		dt["teste_simulado"] = true;
+		dt["perfil"] = avaliados;
+		dt["end_o"] = "0.0.0.0:3000";
+		
+		chrome.runtime.sendMessage({
+			action: 'monitor',
+			url: config2.endereco,
+			type: "POST",
+			data: dt,
+		},  function(responseText) {
+		
+			}
+		);
+
+
+
+		var return_object = {};
+
+		return_object["start_timestamp"] = Date.now();
+		return_object["ativar_stall"] = config2.ativar_stall;
+		return_object["ativar_startup_stall"] = config2.ativar_startup_stall;
+		return_object["ativar_troca_de_resolucao"] = config2.ativar_troca_de_resolucao;
+		return_object["show_video_controls"] = config2.show_video_controls;
+		return_object["stall_duration"] = config2.stall_duration;
+		return_object["startup_time"] = config2.startup_time;
+		return_object["url_page_simulador"] = config2.url_page_simulador;
+		return_object["url_resolucao_1"] = config2.url_resolucao_1;
+		return_object["url_resolucao_2"] = config2.url_resolucao_2;
+		return_object["url_resolucao_3"] = config2.url_resolucao_3;
+		return_object["url_resolucao_4"] = config2.url_resolucao_4;
+		return_object["url_resolucao_5"] = config2.url_resolucao_5;
+		return_object["url_resolucao_6"] = source_o;
+		return_object["resolution_state"] = config2.resolution_state;
+		return_object["estado_stall"] = config2.estado_stall;
+		return_object["video_duration"] = video_element.duration;
+		return_object["perfil"] = avaliados;
+		return_object["teste_simulado"] = true;
+
+		chrome.runtime.sendMessage({
+			action: 'simulador',
+			url: config.endereco,
+			type: "POST",
+			data: return_object,
+		},  function(responseText) {
+
+		});
+
+
+
+
+
+		chrome.runtime.sendMessage({
+			action: 'load',
+			url: config.endereco,
+			data : {'perfil' : avaliados+1},
+			type: "POST",
+		}, function(responseText) {
+				
+			}
+		);
+
+
+		setTimeout(function() {
+			
+			chrome.runtime.sendMessage({
+				action: 'get_remote',
+				url: config.endereco,
+				type: "POST",
+			}, function(responseText) {
+					config2 = responseText;
+				}
+			);
+		}, 1500);
+
+
+
+
+
+
+
+
+		//Envia parametros do simulador
+
+		//send_simulador(config.endereco, config, video_element.currentSrc, video_element.duration);
+
+
+
+		clearInterval(timer_for_change_);
+		avaliados = avaliados + 1;
+		var duration = video_element.duration;
+	
+		video_element.pause();
+		video_element.currentTime = video_element.currentTime - 1;
+	
+		timer_for_change_= setInterval(function() {
+			if(video_element.currentTime > avaliados * (video_element.duration/5.0)) {
+				clearInterval(timer_for_change_);
+				$("#avaliar").click();
+			}
+		}, 300);
+
+
+
+		// LOAD PROXIMO MOS
+
+
+
+		BootstrapDialog.show( {
+			title: "Qualidade de experiência - Simulada",
+			message: $('<div></div>').load("../resources/html/remote.html"),
+		   	closable: true,
+		    closeByBackdrop: false,
+		    closeByKeyboard: false,
+			buttons: [{
+			      		label: 'Boa',
+			        	cssClass: 'btn-primary',
+				        action: function(dialogItself) {
+				       		
+				       		var return_object = {};
+							return_object["opinion"] = "Boa";
+							return_object["rating"] = $('#rating').raty('score');
+							return_object["conteudo"] = $("#conteudo").val();
+							return_object["diario"] = $("#diario").val();
+							return_object["tempo"] = $('input[name="tempo"]:checked').val();
+							return_object["idade"] = $("#idade").val();
+							return_object["sexo"] = $('input[name="sex"]:checked').val();
+							return_object["pais"] = $("#pais").val();
+							return_object["comment"] = $("#comment").val();
+							return_object["perfil"] = avaliados-1
+							return_object["teste_simulado"] = true;
+							return_object["end_o"] = "";
+
+							chrome.runtime.sendMessage({
+								action: 'questionario',
+								url: config.endereco,
+								type: "POST",
+								data: return_object,
+							},  function(responseText) {
+							});
+
+
+				       		
+
+							var time_interval = config2.intervalo_de_monitoramento; //In miliseconds
+							var url = document.URL;
+							video_element.currentTime = (avaliados-1) * (video_element.duration/5.0);
+							
+							monitor = new Monitor(video_element, url);
+							monitor.start_all_monitoring(time_interval, config2.intervalo_minimo_de_stall);
+
+
+
+							simulador = new Simulador(video_element);
+							video_element.controls = false;
+							
+							if(config2.ativar_startup_stall) {
+								setTimeout(function() {
+									video_element.play();
+								}, config2.startup_time);
+							}
+								//simulador.simulate_startup_time();
+
+							
+							
+							if(config2.ativar_troca_de_resolucao && url == config2.url_page_simulador) {
+								simulador.add_url_to_change("1", config2.url_resolucao_1.trim());
+								simulador.add_url_to_change("2", config2.url_resolucao_2.trim());
+								simulador.add_url_to_change("3", config2.url_resolucao_3.trim());
+								simulador.add_url_to_change("4", config2.url_resolucao_4.trim());
+								simulador.add_url_to_change("5", config2.url_resolucao_5.trim());
+							
+								simulador.add_change_at_point(config.resolution_state);
+								simulador.start_change_creator();
+							}
+							
+							
+
+							if(config2.ativar_stall) {
+								simulador.add_stall_duration(config2.stall_duration);
+								simulador.add_stalls_at_point(config2.estado_stall);
+								simulador.start_stall_creator();
+							}
+
+
+
+
+
+							if(avaliados < 6 && config2.ativar_startup_stall == false)
+								video_element.play();
+								
+
+
+							dialogItself.close();
+				       	}	
+					}, {
+					    label: 'Ruim',
+					    cssClass: 'btn-danger',
+						action: function(dialogItself) {
+						    var return_object = {};
+							return_object["opinion"] = "Ruim";
+							return_object["rating"] = $('#rating').raty('score');
+							return_object["conteudo"] = $("#conteudo").val();
+							return_object["diario"] = $("#diario").val();
+							return_object["tempo"] = $('input[name="tempo"]:checked').val();
+							return_object["idade"] = $("#idade").val();
+							return_object["sexo"] = $('input[name="sex"]:checked').val();
+							return_object["pais"] = $("#pais").val();
+							return_object["comment"] = $("#comment").val();
+							return_object["perfil"] = avaliados-1
+							return_object["teste_simulado"] = true;
+							return_object["end_o"] = "0.0.0.0:3000";
+
+							chrome.runtime.sendMessage({
+								action: 'questionario',
+								url: config.endereco,
+								type: "POST",
+								data: return_object,
+							},  function(responseText) {
+							});
+
+
+
+							var time_interval = config2.intervalo_de_monitoramento; //In miliseconds
+							var url = document.URL;
+							video_element.currentTime = (avaliados-1) * (video_element.duration/5.0);
+							
+							monitor = new Monitor(video_element, url);
+							monitor.start_all_monitoring(time_interval, config2.intervalo_minimo_de_stall);
+
+
+
+							simulador = new Simulador(video_element);
+							video_element.controls = false;
+							
+							
+							if(config2.ativar_startup_stall) {
+								setTimeout(function() {
+									video_element.play();
+								}, config2.startup_time);
+							}
+
+								
+							
+							
+							if(config2.ativar_troca_de_resolucao && url == config2.url_page_simulador) {
+								simulador.add_url_to_change("1", config2.url_resolucao_1.trim());
+								simulador.add_url_to_change("2", config2.url_resolucao_2.trim());
+								simulador.add_url_to_change("3", config2.url_resolucao_3.trim());
+								simulador.add_url_to_change("4", config2.url_resolucao_4.trim());
+								simulador.add_url_to_change("5", config2.url_resolucao_5.trim());
+							
+								simulador.add_change_at_point(config2.resolution_state);
+								simulador.start_change_creator();
+							}
+							
+							
+
+							if(config2.ativar_stall) {
+								simulador.add_stall_duration(config2.stall_duration);
+								simulador.add_stalls_at_point(config2.estado_stall);
+								simulador.start_stall_creator();
+							}
+
+
+
+
+
+							if(avaliados < 6 && config2.ativar_startup_stall == false)
+								video_element.play();
+
+
+
+							dialogItself.close();
+
+
+						}
+					}]
+		});
+	});
+
+	var timer_for_change_= setInterval(function() {
+		if(video_element.currentTime > avaliados * (video_element.duration/5.0)) {
+			clearInterval(timer_for_change_);
+			$("#avaliar").click();
+			
+			
+		}
+	}, 300);
+}
 

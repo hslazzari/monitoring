@@ -109,13 +109,14 @@ function save_options() {
     url_resolucao_4 : $("#url_resolucao_4").val(),
     url_resolucao_5 : $("#url_resolucao_5").val(),
     ativar_troca_de_resolucao : $("#ativar_troca_de_resolucao").prop('checked'),
-    url_page_simulador : $("#url_page_simulador").val()
+    url_page_simulador : $("#url_page_simulador").val(),
+    perfil : config_resource
   };
 
 
 
   $.ajax({
-      url: document.URL + "/save",
+      url: window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '') + "/config/save",
       type: "POST",
       data: JSON.stringify(dados),
       contentType: "application/json",
@@ -135,8 +136,9 @@ function save_options() {
 function restore_options() {
 
   $.ajax({
-      url: document.URL + "/load",
+      url: window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '') + "/config/load",
       type: "POST",
+      data: JSON.stringify({'perfil' : config_resource}),
       contentType: "application/json",
       success: function(result) {
         var result_json = $.parseJSON(result);

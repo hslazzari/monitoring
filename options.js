@@ -671,7 +671,7 @@ function retry_load() {
                 retry_load();
               }
           });
-        }, 3000);
+        }, 1000);
 }
 
 

@@ -1,0 +1,33 @@
+<!-- views/pages/index.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+<body class="container">
+
+    <header>
+        <% include ../partials/header %>
+    </header>
+
+    
+    <div class="row">
+    <video height="480" controls autoplay>
+        <source src="../resources/hobbit-1080p-01.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+    </div>
+    <div class="row">
+        <button type="button" id = "avaliar" class="btn btn-success">Avaliar trecho do vídeo e pular para próxima etapa</button>
+    </div>
+
+
+    
+
+    <footer>
+        <% include ../partials/footer %>
+    </footer>
+    
+</body>
+</html>

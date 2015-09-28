@@ -123,6 +123,10 @@ Simulador.prototype.change_source = function(new_id, new_source) {
 	console.log("TROCOU PARA " + new_id + " COM SOURCE: " + new_source);
 }
 
+Simulador.prototype.add_startup_time = function(duration) {
+	this.startup_time_ = duration;
+}
+
 Simulador.prototype.add_stall_duration = function(duration) {
 	this.stall_duration_ = duration;
 }
